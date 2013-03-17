@@ -1,3 +1,4 @@
+====================
 AOSPBrowserInstaller
 ====================
 
@@ -11,6 +12,28 @@ Nexus that have installed Chrome are officially supported devices.
 
 Of course you can test it with all Android devices you want, but it is not recommended.
 
+====================
+CHANGELOG
+====================
+
+[Working on]
+
+-Fix Browser crashes on Nexus 4
+
+Update [1.2]
+
+-Fix busybox issue.
+
+Update [1.1]
+
+-Unneeded permission (Internet) removed.
+-Uses own busybox if not installed.
+-Fix dismiss loading dialog on (officialy) unsupported devices issue.
+
+Initial Release [1.0]
+
+===================================
+COPYRIGHT
 ===================================
 
 Copyright (C) 2013  Ashot Mkrtchyan.
