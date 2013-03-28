@@ -12,6 +12,8 @@ Nexus that have installed Chrome are officially supported devices.
 
 Of course you can test it with all Android devices you want, but it is not recommended.
 
+You can find the source code on GitHub: https://github.com/ashotmkrtchyan1995/AOSPBrowserInstaller
+
 ====================
 CHANGELOG
 ====================
@@ -19,6 +21,11 @@ CHANGELOG
 [Working on]
 
 -Fix Browser crashes on Nexus 4
+
+Update [1.2]
+
+-Install and uninstall progress dialog added
+-Common Source-Code improvements. More on: www.github.com/ashotmkrtchyan1995/AOSPBrowserInstaller/
 
 Update [1.2]
 

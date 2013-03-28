@@ -4,13 +4,14 @@
     <string name="app_name">AOSP Browser Installer</string>
     <string name="action_settings">Settings</string>
     
+    <string name="installator">Installator</string>
+    <string name="uninstallator">Uninstallator</string>
     <string name="installed">AOSP Browser is installed</string>
     <string name="notinstalled">AOSP Browser is not installed.</string>
     
     <string name="warning">Warning!</string>
+    <string name="noroot">"Device not Rooted. Please Root it. More information under xda-developer.com"</string>
     <string name="notsupported">Device not supported by developer.\nIf you want to continue, doing so at your own risk. </string>
-    <string name="noroot">Please root your Device. su Binary not found.</string>
-    <string name="nobusybox">Please install Busybox. Busybox not detected on /system/bin/</string>
     
     <string name="already">AOSP Browser already installed.\nPlease uninstall it first</string>
     <string name="notalready">AOSP Browser is not installed.\nPlease install it first</string>
@@ -22,11 +23,12 @@
 	<string name="option">Option</string>
 	<string name="loading">Loading</string>
 	
-	<string name="mount">Mounting System as RW</string>
-	<string name="unmount">Mounting System as RO</string>
+	<string name="mount">Mounting /system as RW</string>
+	<string name="unmount">Mounting /system as RO</string>
 	
 	<string name="backup">Backup unneeded Apks and Odexs as .old</string>
 	<string name="restore">Restoring Apks and Odexs from .old</string>
+	<string name="clean">Deleating unneeded files</string>
 	
 	<string name="install">Install</string>
 	<string name="installing">Installing</string>
