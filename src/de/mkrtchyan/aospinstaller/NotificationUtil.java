@@ -41,8 +41,8 @@ public class NotificationUtil {
 	public void createDialog(int Title, String Message , boolean isCancelable) {
 		tv = new TextView(context);
 		tv.setTextSize(20);
-		tv.setText("\n" + Message + "\n");
-		dialog = new Dialog(context); // , R.style.AboutDialog
+		tv.setText(Message);
+		dialog = new Dialog(context);
 		dialog.setTitle(Title);
 		dialog.setContentView(tv);
 		dialog.setCancelable(isCancelable);
@@ -72,6 +72,28 @@ public class NotificationUtil {
 			.makeText(context, Message, Toast.LENGTH_LONG)
 			.show();
 	}
+	public void createAlertDialog(int Title, int Message, final Runnable runOnTrue) {
+		abuilder = new AlertDialog.Builder(context);
+		abuilder
+			.setTitle(Title)
+			.setMessage(Message)
+			.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+				runOnTrue.run();
+			}
+		})
+			.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		})
+			.show();
+	}
+	
 	public void createAlertDialog(int Title, int Message, boolean PositiveButton, final Runnable runOnTrue, boolean NeutralButton, final Runnable runOnNeutral, boolean NegativeButton , final Runnable runOnNegative) {
 		abuilder = new AlertDialog.Builder(context);
 		abuilder
@@ -111,5 +133,4 @@ public class NotificationUtil {
 		
 		abuilder.show();
 	}
-	
 }

@@ -44,7 +44,8 @@ public class MainActivity extends Activity {
 	private static boolean firststart = false;
 	
 	Context context = this;
-	NotificationUtil nu = new NotificationUtil(this);
+	NotificationUtil nu = new NotificationUtil(context);
+	CommonUtil cu = new CommonUtil(context);
 	
 	File browser = new File(SystemApps + "/", "Browser.apk");
 	File chromesync = new File(SystemApps + "/", "ChromeBookmarksSyncAdapter.apk");
@@ -57,7 +58,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		if (!firststart){
-			if (!suRecognition()){
+			if (!cu.suRecognition()){
 				createNotification(R.drawable.ic_launcher, R.string.warning, R.string.noroot, nid);
 				finish();
 				System.exit(0);
@@ -65,14 +66,12 @@ public class MainActivity extends Activity {
 			
 			resetRunnables();
 			
-			checkFolder(context.getFilesDir());
+			cu.checkFolder(context.getFilesDir());
 			
 			firststart = true;
 		
 	        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia")) {
 				nu.createDialog(R.string.warning, R.string.notsupported, true, true);
-			} else if (!suRecognition()) {
-				nu.createDialog(R.string.warning, R.string.noroot, true, true);
 			}
 		}
 		getInfos = new Runnable(){
@@ -120,8 +119,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void run() {
-				Installator installator = new Installator(context, getInfos);
-				installator.execute(true);
+				new Installer(context, getInfos).execute(true);
 			}
 			
 		};
@@ -129,8 +127,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void run() {
-				Installator installator = new Installator(context, getInfos);
-				installator.execute(false);
+				new Installer(context, getInfos).execute(false);
 			}
 			
 		};
@@ -138,32 +135,7 @@ public class MainActivity extends Activity {
 	}
 
 	public void uninstall(View v){
-		Uninstallator uninstallator = new Uninstallator(context, getInfos);
-		uninstallator.execute();
-	}
-
-	
-	public void checkFolder(File Folder) {
-		if (!Folder.exists()) {
-			Folder.mkdir();
-		}
-	}
-	
-	public String executeShell(String[] Command){
-		return new Shell().sendShellCommand(Command);
-	}
-	
-	
-	public boolean suRecognition() {
-		String Command[] = {"su", "-c", "echo test"};
-		String Command2[] = {"echo", "test"};
-		String output = executeShell(Command);
-		String output2 = executeShell(Command2);
-		if (output.equals(output2)){
-			return true;
-		} else {
-			return false;
-		}
+		new Uninstaller(context, getInfos).execute();
 	}
 	
 	public void resetRunnables(){

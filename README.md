@@ -22,7 +22,11 @@ CHANGELOG
 
 -Fix Browser crashes on Nexus 4
 
-Update [1.2]
+Update [1.4]
+
+-Common improvements
+
+Update [1.3]
 
 -Install and uninstall progress dialog added
 -Common Source-Code improvements. More on: www.github.com/ashotmkrtchyan1995/AOSPBrowserInstaller/
