@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 
 public class Installer extends AsyncTask <Boolean, Integer, Void>{
 	
+	private static final String Device = android.os.Build.DEVICE;
 	private static final File SystemApps = new File("/system/app");
 	private static final File PathToBin = new File("/system/bin");
 	private static boolean useown = false;
@@ -60,7 +61,11 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 	@Override
 	protected Void doInBackground(Boolean... options) {
 		publishProgress(R.string.unpackbrowser, 1);
-		cu.pushFileFromRAW(browserapk, R.raw.browser);
+		if (Device.equals("mako")) {
+			cu.pushFileFromRAW(browserapk, R.raw.browser_n4);
+		} else {
+			cu.pushFileFromRAW(browserapk, R.raw.browser);
+		}
 		publishProgress(R.string.mount, 2);
 		mountSystem(true);
 		publishProgress(R.string.backup, 3);

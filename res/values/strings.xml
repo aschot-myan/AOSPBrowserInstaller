@@ -28,7 +28,7 @@
 	
 	<string name="backup">Backup unneeded Apks and Odexs as .old</string>
 	<string name="restore">Restoring Apks and Odexs from .old</string>
-	<string name="clean">Deleating unneeded files</string>
+	<string name="clean">Deleting unneeded files</string>
 	
 	<string name="install">Install</string>
 	<string name="installing">Installing</string>

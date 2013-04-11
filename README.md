@@ -18,7 +18,7 @@ You can find the source code on GitHub: https://github.com/ashotmkrtchyan1995/AO
 CHANGELOG
 ====================
 
-[Working on]
+Update [1.5]
 
 -Fix Browser crashes on Nexus 4
 
