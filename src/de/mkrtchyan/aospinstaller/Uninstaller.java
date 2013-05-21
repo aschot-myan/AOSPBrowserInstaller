@@ -2,6 +2,9 @@ package de.mkrtchyan.aospinstaller;
 
 import java.io.File;
 
+import de.mkrtchyan.utils.Common;
+import de.mkrtchyan.utils.Notifyer;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,9 +15,9 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 	private static final File PathToBin = new File("/system/bin");
 	private static boolean useown = false;
 	
-	Context context;
-	NotificationUtil nu;
-	CommonUtil cu;
+	Context mContext;
+	Notifyer n;
+	Common c = new Common();
 	ProgressDialog pd;
 	File busybox = new File(PathToBin, "busybox");
 	File ownbusybox;
@@ -30,10 +33,9 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 
 	
 	public Uninstaller(Context context, Runnable getInfos){
-		this.context = context;
+		mContext = context;
 		this.getInfos = getInfos;
-		nu = new NotificationUtil(context);
-		cu = new CommonUtil(context);
+		n = new Notifyer(context);
 		ownbusybox = new File(context.getFilesDir(), "/busybox");
 	}
 	
@@ -42,11 +44,11 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 		if (!busybox.exists()) {
 			useown = true;
 			if (!ownbusybox.exists()) {
-				cu.pushFileFromRAW(ownbusybox, R.raw.busybox);
-				cu.chmod("641", ownbusybox);
+				c.pushFileFromRAW(mContext, ownbusybox, R.raw.busybox);
+				c.chmod(ownbusybox, "641", true);
 			}
 		}
-		pd = new ProgressDialog(context);
+		pd = new ProgressDialog(mContext);
 		pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		pd.setTitle("Uninstallator");
 		pd.setMax(4);
@@ -78,28 +80,28 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 	public void moveFile(File input, File output){
 
 		if (useown) {
-			cu.executeShell(context.getFilesDir().getAbsolutePath() + "/busybox mv " + input.getAbsolutePath() + " " + output.getAbsolutePath());
+			c.executeShell(mContext.getFilesDir().getAbsolutePath() + "/busybox mv " + input.getAbsolutePath() + " " + output.getAbsolutePath());
 		} else{
-			cu.executeShell("busybox mv " + input.getAbsolutePath() + " " + output.getAbsolutePath());
+			c.executeShell("busybox mv " + input.getAbsolutePath() + " " + output.getAbsolutePath());
 		}
 	}
 	
 	public void deleteFile(File FileToDelete){
-		cu.executeShell("rm " + FileToDelete.getAbsolutePath());
+		c.executeShell("rm " + FileToDelete.getAbsolutePath());
 	}
 	
 	public void mountSystem(boolean RW){
 		if (useown){
 			if (RW){
-				cu.executeShell(ownbusybox.getAbsolutePath() + " mount -o remount,rw /system");
+				c.executeShell(ownbusybox.getAbsolutePath() + " mount -o remount,rw /system");
 			} else {
-				cu.executeShell(ownbusybox.getAbsolutePath() + " mount -o remount,ro /system");
+				c.executeShell(ownbusybox.getAbsolutePath() + " mount -o remount,ro /system");
 			}
 		} else {
 			if (RW){
-				cu.executeShell("busybox mount -o remount,rw /system");
+				c.executeShell("busybox mount -o remount,rw /system");
 			} else {
-				cu.executeShell("busybox mount -o remount,ro /system");
+				c.executeShell("busybox mount -o remount,ro /system");
 			}
 		}
 	}
@@ -129,10 +131,10 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 			
 			@Override
 			public void run() {
-				cu.executeShell("reboot");
+				c.executeShell("reboot");
 			}
 		};
-		nu.createAlertDialog(R.string.information, R.string.completeuninstallation, true, rtrue, false, rneutral, true, rfalse);
+		n.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse);
 		getInfos.run();
 	}
 	

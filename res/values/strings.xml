@@ -7,6 +7,7 @@
     <string name="installator">Installator</string>
     <string name="uninstallator">Uninstallator</string>
     <string name="installed">AOSP Browser is installed</string>
+    <string name="with_sync">%s (with ChromeSync)</string>
     <string name="notinstalled">AOSP Browser is not installed.</string>
     
     <string name="warning">Warning!</string>
