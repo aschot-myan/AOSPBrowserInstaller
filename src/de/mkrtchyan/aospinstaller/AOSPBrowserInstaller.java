@@ -21,17 +21,9 @@ package de.mkrtchyan.aospinstaller;
  * SOFTWARE.
  */
 
-import java.io.File;
-
-import de.mkrtchyan.utils.Common;
-import de.mkrtchyan.utils.Notifyer;
-
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -39,133 +31,112 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.rootcommands.util.Log;
+
+import java.io.File;
+
+import de.mkrtchyan.utils.Common;
+import de.mkrtchyan.utils.Notifyer;
+
 public class AOSPBrowserInstaller extends Activity {
-	
-	private static final String Device = android.os.Build.DEVICE;
-	private static final String SystemApps = "/system/app";
-	private static final int nid = 25;
-	private static boolean firststart = false;
-	
-	Context mContext = this;
-	Notifyer n = new Notifyer(mContext);
-	Common c = new Common();
-	
-	File browser = new File(SystemApps + "/", "Browser.apk");
-	File chromesync = new File(SystemApps + "/", "ChromeBookmarksSyncAdapter.apk");
-	
-	static Runnable getInfos;
+
+	private static final String TAG = "AOSPBrowserInstaller";
+    private final Context mContext = this;
+    private final Notifyer mNotifyer = new Notifyer(mContext);
+    private final Common mCommon = new Common();
+
+	private static final String Device = Build.DEVICE;
+	private boolean firststart = true;
+    public static final File SystemApps = new File("/system/app");
+    public static final File browser = new File(SystemApps, "Browser.apk");
+    public static final File chromesync = new File(SystemApps, "ChromeBookmarksSyncAdapter.apk");
+    public static final File bppapk = new File(SystemApps, "BrowserProviderProxy.apk");
+    public static final File bppapkold = new File(SystemApps, "BrowserProviderProxy.apk.old");
+    public static final File bppodex = new File(SystemApps, "BrowserProviderProxy.odex");
+    public static final File bppodexold = new File(SystemApps, "BrowserProviderProxy.odex.old");
+	final Runnable reloadUI = new Runnable(){
+
+		@Override
+		public void run() {
+
+			final ProgressBar pbInstallation = (ProgressBar) findViewById(R.id.pbInstallation);
+			final Button bGo = (Button) findViewById(R.id.bGo);
+			final TextView tvInfo = (TextView) findViewById(R.id.tvInfo);
+			final ImageView ivIcon = (ImageView) findViewById(R.id.ivIcon);
+
+			pbInstallation.setMax(1);
+			if (browser.exists()) {
+				tvInfo.setText(R.string.installed);
+				bGo.setText(R.string.uninstall);
+				ivIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher_browser));
+				pbInstallation.setProgress(1);
+				if (chromesync.exists()){
+					tvInfo.setText(String.format(mContext.getString(R.string.with_sync), mContext.getText(R.string.installed)));
+				}
+			} else {
+				tvInfo.setText(R.string.notinstalled);
+				pbInstallation.setProgress(0);
+				bGo.setText(R.string.install);
+				ivIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher_browserun));
+			}
+		}
+	};;
 	Runnable rtrue, rneutral, rfalse;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_main);
-		
-		if (!firststart){
-			if (!c.suRecognition()){
-				createNotification(R.drawable.ic_launcher, R.string.warning, R.string.noroot, nid);
-				finish();
-				System.exit(0);
+
+		Log.i(TAG, "started");
+
+		if (firststart){
+			if (!mCommon.suRecognition()){
+				mNotifyer.showRootDeniedDialog();
 			}
 			
 			resetRunnables();
 			
-			c.checkFolder(mContext.getFilesDir());
-			
-			firststart = true;
+			firststart = false;
 		
 	        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia")) {
-				n.createDialog(R.string.warning, R.string.notsupported, true, true);
+				mNotifyer.createDialog(R.string.warning, R.string.notsupported, true, true).show();
 			}
+            firststart = false;
 		}
-		getInfos = new Runnable(){
 
-			@Override
-			public void run() {
-				ProgressBar pbInstallation = (ProgressBar) findViewById(R.id.pbInstallation);
-				Button Install = (Button) findViewById(R.id.bInstall);
-				Button Uninstall = (Button) findViewById(R.id.bUninstall);
-				TextView tvInfo = (TextView) findViewById(R.id.tvInfo);
-				ImageView ivIconUninstalled = (ImageView) findViewById(R.id.ivIconUninstalled);
-				ImageView ivIconInstalled = (ImageView) findViewById(R.id.ivIconInstalled);
-				pbInstallation.setMax(1);
-				if (browser.exists()) {
-					tvInfo.setText(R.string.installed);
-					Install.setVisibility(4);
-					Install.setClickable(false);
-					Uninstall.setVisibility(0);
-					Uninstall.setClickable(true);
-					ivIconInstalled.setVisibility(0);
-					ivIconUninstalled.setVisibility(4);
-					pbInstallation.setProgress(1);
-					if (chromesync.exists()){
-						tvInfo.setText(String.format(mContext.getString(R.string.with_sync), mContext.getText(R.string.installed)));
-					}
-				} else {
-					tvInfo.setText(R.string.notinstalled);
-					pbInstallation.setProgress(0);
-					Install.setVisibility(0);
-					Install.setClickable(true);
-					Uninstall.setVisibility(4);
-					Uninstall.setClickable(false);
-					ivIconInstalled.setVisibility(4);
-					ivIconUninstalled.setVisibility(0);
-				}
-			}				
-		};
-		getInfos.run();
+		reloadUI.run();
 	}
 	
 	
-	public void install(View v){
-		
-		rtrue = new Runnable(){
+	public void Go(View view){
+
+        if (!browser.exists()) {
+		    rtrue = new Runnable(){
 
 			@Override
 			public void run() {
-				new Installer(mContext).execute(true);
+				new Installer(mContext, reloadUI).execute(true);
 			}
 		};
-		rneutral = new Runnable(){
+		    rneutral = new Runnable(){
 
 			@Override
 			public void run() {
-				new Installer(mContext).execute(false);
+				new Installer(mContext, reloadUI).execute(false);
 			}
 		};
-		n.createAlertDialog(R.string.option, R.string.addsync, rtrue , rneutral, rfalse);
+		    mNotifyer.createAlertDialog(R.string.option, R.string.addsync, rtrue, rneutral, rfalse).show();
+        } else {
+            new Uninstaller(mContext, reloadUI).execute();
+        }
 	}
 
-	public void uninstall(View v){
-		new Uninstaller(mContext, getInfos).execute();
-	}
-	
 	public void resetRunnables(){
-		rtrue = new Runnable(){
-			@Override
-			public void run() {
-			}
-		};
-		rneutral = new Runnable(){
-			@Override
-			public void run() {
-			}
-		};
-		rfalse = new Runnable(){
-			@Override
-			public void run() {
-			}
-		};
-	}
-	
-	@SuppressWarnings("deprecation")
-	public void createNotification(int Icon, int Title, int Message, int nid) {
-		Intent intent = new Intent();
-		PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Notification n = new Notification(Icon, getString(Message), System.currentTimeMillis());
-		n.setLatestEventInfo(this, getString(Title), getString(Message), pi);
-		n.flags = Notification.FLAG_AUTO_CANCEL;
-		nm.notify(nid, n);	
+
+        rtrue = Notifyer.rEmpty;
+		rneutral = Notifyer.rEmpty;
+		rfalse = Notifyer.rEmpty;
 	}
 }

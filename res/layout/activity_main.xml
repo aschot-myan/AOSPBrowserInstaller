@@ -15,7 +15,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:text="@string/empty"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAlignment="center"/>
 
     <ProgressBar
         android:id="@+id/pbInstallation"
@@ -26,47 +27,24 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/tvInfo" />
 
-    <Button
-        android:id="@+id/bUninstall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/bInstall"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
-        android:clickable="false"
-        android:onClick="uninstall"
-        android:text="@string/uninstall" />
-
     <ImageView
-        android:id="@+id/ivIconInstalled"
+        android:id="@+id/ivIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/pbInstallation"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:contentDescription="@string/iconinstalled"
-        android:src="@drawable/ic_launcher_browser"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <Button
-        android:id="@+id/bInstall"
+        android:id="@+id/bGo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivIconInstalled"
+        android:layout_below="@+id/ivIcon"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:clickable="false"
-        android:onClick="install"
-        android:text="@string/install" />
-
-    <ImageView
-        android:id="@+id/ivIconUninstalled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/ivIconInstalled"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="@string/iconuninstalled"
-        android:src="@drawable/ic_launcher_browserun"
-        android:visibility="invisible" />
+        android:clickable="true"
+        android:onClick="Go"
+            />
 
 </RelativeLayout>
