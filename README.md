@@ -18,6 +18,10 @@ You can find the source code on GitHub: https://github.com/ashotmkrtchyan1995/AO
 CHANGELOG
 ====================
 
+Update [2.6]
+
+-Fixed crash on uninstall.
+
 Update [2.5]
 
 -Update AOSPBrowser apk to 4.3 (only on 4.3 devices)

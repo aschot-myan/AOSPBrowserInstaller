@@ -68,10 +68,10 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
             mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RW");
             publishProgress(R.string.restore, 2);
             if (AOSPBrowserInstaller.bppapkold.exists() && !AOSPBrowserInstaller.bppapk.exists()) {
-                mCommon.copy(AOSPBrowserInstaller.bppapkold, AOSPBrowserInstaller.bppapk, true);
+                copy(AOSPBrowserInstaller.bppapkold, AOSPBrowserInstaller.bppapk);
             }
             if (AOSPBrowserInstaller.bppodexold.exists() && !AOSPBrowserInstaller.bppodex.exists()){
-                mCommon.copy(AOSPBrowserInstaller.bppodexold, AOSPBrowserInstaller.bppodex, true);
+                copy(AOSPBrowserInstaller.bppodexold, AOSPBrowserInstaller.bppodex);
             }
             publishProgress(R.string.clean, 3);
             mCommon.executeSuShell("rm " + AOSPBrowserInstaller.browser.getAbsolutePath());
@@ -109,10 +109,14 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 		mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
 		reloadUI.run();
 	}
-	
+
 	protected void onProgressUpdate(Integer... states) {
 		pDialog.setTitle(states[0]);
 		pDialog.setProgress(states[1]);
 	}
-	
+
+	public void copy(File source, File destination) throws RootAccessDeniedException {
+		mCommon.executeSuShell(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
+	}
+
 }
