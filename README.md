@@ -18,6 +18,12 @@ You can find the source code on GitHub: https://github.com/ashotmkrtchyan1995/AO
 CHANGELOG
 ====================
 
+Update [3.0]
+
+-Donations added
+-Optionally ads
+-APK now smaller (Browser will be downloaded once on first install)
+
 Update [2.6]
 
 -Fixed crash on uninstall.

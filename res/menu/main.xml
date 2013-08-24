@@ -1,9 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:id="@+id/iShowAds"
+        android:title="@string/Show_ads"
+        android:checkable="true" />
+    <item
+        android:id="@+id/iDonate"
+        android:title="@string/donate" />
 
 </menu>

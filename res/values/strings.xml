@@ -27,7 +27,7 @@
 	
 	<string name="install">Install</string>
 	<string name="installing">Installing</string>
-	<string name="unpackbrowser">Unpacking Browser.apk</string>
+	<string name="checking_files">Checking files</string>
 	<string name="unpacksync">Unpacking ChromeBookmarksSyncAdapter.apk</string>
 	<string name="pushbrowser">Pushing AOSP Browser in to SystemApps directory</string>
 	<string name="pushsync">Pushing ChromeSync in to SystemApps directory</string>
@@ -40,5 +40,15 @@
 	<string name="information">Information</string>
 	<string name="completeinstallation">You should Reboot to complete your installation.\nReboot now?</string>
 	<string name="completeuninstallation">You should Reboot to complete your uninstallation.\nReboot now?</string>
-    
+
+    <string name="Show_ads">Show Ads</string>
+    <string name="donate">Donate</string>
+    <string name="please_restart">Please restart the app to apply changes</string>
+
+    <string-array name="donation_google_catalog_values">
+        <item>0,50 Euro</item>
+        <item>1 Euro</item>
+        <item>2 Euros</item>
+    </string-array>
+
 </resources>

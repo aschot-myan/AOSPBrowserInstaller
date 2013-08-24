@@ -25,7 +25,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import org.rootcommands.util.RootAccessDeniedException;
+import com.sbstrm.appirater.Appirater;
+
+import org.sufficientlysecure.rootcommands.util.RootAccessDeniedException;
 
 import java.io.File;
 
@@ -108,7 +110,8 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 		};
 		mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
 		reloadUI.run();
-	}
+        Appirater.appLaunched(mContext);
+    }
 
 	protected void onProgressUpdate(Integer... states) {
 		pDialog.setTitle(states[0]);

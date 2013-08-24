@@ -24,9 +24,10 @@ package de.mkrtchyan.aospinstaller;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 
-import org.rootcommands.util.RootAccessDeniedException;
+import com.sbstrm.appirater.Appirater;
+
+import org.sufficientlysecure.rootcommands.util.RootAccessDeniedException;
 
 import java.io.File;
 
@@ -60,7 +61,7 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 		pDialog = new ProgressDialog(mContext);
 		pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		pDialog.setTitle(R.string.installer);
-		pDialog.setMax(9);
+		pDialog.setMax(8);
 		pDialog.setCancelable(false);
 		pDialog.show();
 		mCommon.pushFileFromRAW(mContext, busybox, R.raw.busybox);
@@ -70,34 +71,30 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 	@Override
 	protected Void doInBackground(Boolean... options)  {
 		try {
-			publishProgress(R.string.unpackbrowser, 1);
-			if (Build.VERSION.SDK_INT > 17)
-				mCommon.pushFileFromRAW(mContext, browserapk, R.raw.browser_43);
-			else
-				mCommon.pushFileFromRAW(mContext, browserapk, R.raw.browser_42);
-			publishProgress(R.string.mount, 2);
+
+			publishProgress(R.string.mount, 1);
 			mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RW");
 
-			publishProgress(R.string.backup, 3);
+			publishProgress(R.string.backup, 2);
 			if (!AOSPBrowserInstaller.bppapkold.exists() && AOSPBrowserInstaller.bppapk.exists()){
-				copy(AOSPBrowserInstaller.bppapk, AOSPBrowserInstaller.bppapkold);
+				move(AOSPBrowserInstaller.bppapk, AOSPBrowserInstaller.bppapkold);
 			}
 			if (!AOSPBrowserInstaller.bppodexold.exists() && AOSPBrowserInstaller.bppodex.exists()) {
-				copy(AOSPBrowserInstaller.bppodex, AOSPBrowserInstaller.bppodexold);
+				move(AOSPBrowserInstaller.bppodex, AOSPBrowserInstaller.bppodexold);
 			}
-			publishProgress(R.string.pushbrowser, 4);
+			publishProgress(R.string.pushbrowser, 3);
 			copy(browserapk, AOSPBrowserInstaller.browser);
-			publishProgress(R.string.setpermissions, 5);
+			publishProgress(R.string.setpermissions, 4);
 			mCommon.chmod(AOSPBrowserInstaller.browser, "644");
 			if (options[0] && !AOSPBrowserInstaller.chromesync.exists()){
-				publishProgress(R.string.unpacksync, 6);
+				publishProgress(R.string.unpacksync, 5);
 				mCommon.pushFileFromRAW(mContext, chromesyncapk, R.raw.chromebookmarkssyncadapter);
-				publishProgress(R.string.pushsync, 7);
-				copy(chromesyncapk, AOSPBrowserInstaller.chromesync);
-				publishProgress(R.string.setpermissions, 8);
+				publishProgress(R.string.pushsync, 6);
+				move(chromesyncapk, AOSPBrowserInstaller.chromesync);
+				publishProgress(R.string.setpermissions, 7);
 				mCommon.chmod(AOSPBrowserInstaller.chromesync, "644");
 			}
-			publishProgress(R.string.unmount, 9);
+			publishProgress(R.string.unmount, 8);
 			mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RO");
 
 		} catch (RootAccessDeniedException e) {
@@ -122,7 +119,8 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 		};
 		mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
 		reloadUI.run();
-	}
+        Appirater.appLaunched(mContext);
+    }
 	
 	protected void onProgressUpdate(Integer... states) {
 		pDialog.setTitle(states[0]);
@@ -135,7 +133,11 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
         rfalse = Notifyer.rEmpty;
     }
 
-	public void copy(File source, File destination) throws RootAccessDeniedException {
+	public void move(File source, File destination) throws RootAccessDeniedException {
 		mCommon.executeSuShell(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
 	}
+
+    public void copy(File source, File destination) throws RootAccessDeniedException {
+        mCommon.executeSuShell(busybox.getAbsolutePath() + " cp " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
+    }
 }

@@ -23,19 +23,26 @@ package de.mkrtchyan.aospinstaller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.rootcommands.util.Log;
+import com.google.ads.AdView;
 
 import java.io.File;
 
 import de.mkrtchyan.utils.Common;
+import de.mkrtchyan.utils.Downloader;
 import de.mkrtchyan.utils.Notifyer;
 
 public class AOSPBrowserInstaller extends Activity {
@@ -46,9 +53,9 @@ public class AOSPBrowserInstaller extends Activity {
     private final Common mCommon = new Common();
 
 	private static final String Device = Build.DEVICE;
-	private boolean firststart = true;
     public static final File SystemApps = new File("/system/app");
     public static final File browser = new File(SystemApps, "Browser.apk");
+    private File browserapk;
     public static final File chromesync = new File(SystemApps, "ChromeBookmarksSyncAdapter.apk");
     public static final File bppapk = new File(SystemApps, "BrowserProviderProxy.apk");
     public static final File bppapkold = new File(SystemApps, "BrowserProviderProxy.apk.old");
@@ -81,7 +88,7 @@ public class AOSPBrowserInstaller extends Activity {
 			}
 		}
 	};;
-	Runnable rtrue, rneutral, rfalse;
+	Runnable rtrue, rneutral, rfalse, doWork;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,52 +96,114 @@ public class AOSPBrowserInstaller extends Activity {
 
 		setContentView(R.layout.activity_main);
 
+        browserapk = new File(mContext.getFilesDir(), "Browser.apk");
+
+        if (!mCommon.getBooleanPerf(mContext, "config", "firststart")) {
+            mCommon.setBooleanPerf(mContext, "config", "firststart", true);
+            mCommon.setBooleanPerf(mContext, "config", "show_ads", true);
+        }
+
 		Log.i(TAG, "started");
 
-		if (firststart){
-			if (!mCommon.suRecognition()){
-				mNotifyer.showRootDeniedDialog();
-			}
-			
-			resetRunnables();
-			
-			firststart = false;
+		resetRunnables();
 		
-	        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia")) {
-				mNotifyer.createDialog(R.string.warning, R.string.notsupported, true, true).show();
-			}
-            firststart = false;
+        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia")) {
+			mNotifyer.createDialog(R.string.warning, R.string.notsupported, true, true).show();
 		}
-
 		reloadUI.run();
+        try {
+            if (!mCommon.getBooleanPerf(mContext, "config", "show_ads")) {
+                AdView adView = (AdView) findViewById(R.id.adView);
+                ((ViewGroup) adView.getParent()).removeView(adView);
+            }
+        } catch (NullPointerException e) {
+            mNotifyer.showExceptionToast(e);
+        }
+
+        doWork = new Runnable() {
+            @Override
+            public void run() {
+                if (!browser.exists()) {
+                    rtrue = new Runnable(){
+
+                        @Override
+                        public void run() {
+                            new Installer(mContext, reloadUI).execute(true);
+                        }
+                    };
+                    rneutral = new Runnable(){
+
+                        @Override
+                        public void run() {
+                            new Installer(mContext, reloadUI).execute(false);
+                        }
+                    };
+                    mNotifyer.createAlertDialog(R.string.option, R.string.addsync, rtrue, rneutral, rfalse).show();
+                } else {
+                    new Uninstaller(mContext, reloadUI).execute();
+                }
+            }
+        };
 	}
-	
-	
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        super.onPrepareOptionsMenu(menu);
+        try {
+            MenuItem iShowAds = menu.findItem(R.id.iShowAds);
+            iShowAds.setChecked(mCommon.getBooleanPerf(mContext, "config", "show_ads"));
+        } catch (NullPointerException e) {
+            mNotifyer.showExceptionToast(e);
+        }
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.iDonate:
+                startActivity(new Intent(this, DonationsActivity.class));
+                return true;
+            case R.id.iShowAds:
+                if (mCommon.getBooleanPerf(mContext, "config", "show_ads")) {
+                    mCommon.setBooleanPerf(mContext, "config", "show_ads", false);
+                } else {
+                    mCommon.setBooleanPerf(mContext, "config", "show_ads", true);
+                }
+                mNotifyer.showToast(R.string.please_restart);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 	public void Go(View view){
 
-        if (!browser.exists()) {
-		    rtrue = new Runnable(){
-
-			@Override
-			public void run() {
-				new Installer(mContext, reloadUI).execute(true);
-			}
-		};
-		    rneutral = new Runnable(){
-
-			@Override
-			public void run() {
-				new Installer(mContext, reloadUI).execute(false);
-			}
-		};
-		    mNotifyer.createAlertDialog(R.string.option, R.string.addsync, rtrue, rneutral, rfalse).show();
+        if (!mCommon.suRecognition()){
+            mNotifyer.showRootDeniedDialog();
         } else {
-            new Uninstaller(mContext, reloadUI).execute();
+
+            if (!browser.exists()) {
+                String name = "";
+                if (Build.VERSION.SDK_INT > 17)
+                    name = "browser_43.apk";
+                else
+                    name = "browser_42.apk";
+                new Downloader(mContext, "http://dslnexus.nazuka.net", name, browserapk, doWork).execute();
+            } else {
+                doWork.run();
+            }
+
         }
 	}
 
 	public void resetRunnables(){
-
         rtrue = Notifyer.rEmpty;
 		rneutral = Notifyer.rEmpty;
 		rfalse = Notifyer.rEmpty;
