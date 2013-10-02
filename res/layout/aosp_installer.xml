@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AOSPBrowserInstaller" >
+
+    <TextView
+        android:id="@+id/tvInfo"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAlignment="center" />
+
+    <ProgressBar
+        android:id="@+id/pbInstallation"
+        android:layout_gravity="center_horizontal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/bGo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:onClick="Go" />
+
+
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+        <com.google.ads.AdView
+                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+                android:id="@+id/adView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                ads:adUnitId="ca-app-pub-3591384811135190/8913247793"
+                ads:adSize="SMART_BANNER"
+                ads:testDevices="538324DB6D51B29D9320AFDB7D564DFB"
+                ads:loadAdOnCreate="true"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"/>
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

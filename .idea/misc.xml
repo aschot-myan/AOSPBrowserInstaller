@@ -19,7 +19,7 @@
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="Android 4.2.2" project-jdk-type="Android SDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="Android 4.3 Platform" project-jdk-type="Android SDK">
     <output url="file://C:/DEV/out/AOSPBrowserInstaller" />
   </component>
 </project>

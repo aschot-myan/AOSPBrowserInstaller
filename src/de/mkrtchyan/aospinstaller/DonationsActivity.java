@@ -27,18 +27,21 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.LinearLayout;
 
 import donations.DonationsFragment;
 
 
 public class DonationsActivity extends FragmentActivity {
 
+	private LinearLayout Layout;
+
     /**
      * Google
      */
     private static final boolean GOOGLE_PLAY = true;
     private static final String GOOGLE_PUBKEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhHa/9/sYU2dbF6nQqGzNktvxb+83Ed/inkK8cbiEkcRjw/t/Okge6UghlyYEXcZLJL9TDPAlraktUZZ/XH8+ZpgdNlO+UeQTD4Yl9ReZ/ujQ151g/RLrVNi7NF4SQ1jD20RmX2lCUhbl5cPi6UKL/bHFeZwjE0pOr48svW0nXbRfpgSSk3V/DaV1igTX66DuFUITKi0gQGD8XAVsrOcQRQtr4wHfdgyMQR9m0vPPzpFoDD8SZZFCp9UgvuzqdwYqY8kr7ZcyxuQhaNlcx74hpFQ9MJteRTII+ii/pHfWDh0hDMqcodm4UD9rISmPSvlLR3amfSg4Vm6ObWFiVe4qVwIDAQAB";
-    private static final String[] GOOGLE_CATALOG = new String[]{"donate_0_50", "donate_1", "donate_2"};
+    private static final String[] GOOGLE_CATALOG = new String[]{"donate_0_50", "donate_1", "donate_2", "donate_3", "donate_5"};
 
     /**
      * PayPal
@@ -60,14 +63,18 @@ public class DonationsActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.donations_activity);
+	    Layout = new LinearLayout(this);
+	    Layout.setOrientation(LinearLayout.VERTICAL);
+	    Layout.setId(1);
+
+        setContentView(Layout);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         DonationsFragment donationsFragment;
         donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, GOOGLE_PLAY, GOOGLE_PUBKEY, GOOGLE_CATALOG,
                 getResources().getStringArray(R.array.donation_google_catalog_values), PAYPAL, PAYPAL_USER, PAYPAL_CURRENCY_CODE, PAYPAL_ITEM_NAME, FLATTR, FLATTR_PROJECT_URL, FLATTR_URL);
 
-        ft.replace(R.id.donations_activity_container, donationsFragment, "donationsFragment");
+        ft.replace(Layout.getId(), donationsFragment, "donationsFragment");
         ft.commit();
     }
 

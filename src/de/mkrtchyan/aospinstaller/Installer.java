@@ -27,24 +27,24 @@ import android.os.AsyncTask;
 
 import com.sbstrm.appirater.Appirater;
 
-import org.sufficientlysecure.rootcommands.util.RootAccessDeniedException;
+import org.rootcommands.util.RootAccessDeniedException;
 
 import java.io.File;
 
 import de.mkrtchyan.utils.Common;
 import de.mkrtchyan.utils.Notifyer;
 
-public class Installer extends AsyncTask <Boolean, Integer, Void>{
+public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
 
 	
-	Context mContext;
-	Notifyer mNotifyer;
-	Common mCommon;
-	ProgressDialog pDialog;
+	private Context mContext;
+	private Notifyer mNotifyer;
+	private Common mCommon;
+	private ProgressDialog pDialog;
 
-    File browserapk, chromesyncapk, busybox;
+    private File browserapk, chromesyncapk, busybox;
 	
-	Runnable rtrue, rneutral, rfalse, reloadUI;
+	private Runnable rtrue, rfalse, reloadUI;
 	
 	public Installer(Context mContext, Runnable reloadUI){
 		this.mContext = mContext;
@@ -57,10 +57,9 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 	}
 	
 	protected void onPreExecute(){
-		resetRunnables();
 		pDialog = new ProgressDialog(mContext);
 		pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		pDialog.setTitle(R.string.installer);
+		pDialog.setTitle(R.string.installing);
 		pDialog.setMax(8);
 		pDialog.setCancelable(false);
 		pDialog.show();
@@ -69,9 +68,8 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 	}
 
 	@Override
-	protected Void doInBackground(Boolean... options)  {
+	protected Boolean doInBackground(Boolean... options)  {
 		try {
-
 			publishProgress(R.string.mount, 1);
 			mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RW");
 
@@ -99,27 +97,38 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 
 		} catch (RootAccessDeniedException e) {
 			mNotifyer.showExceptionToast(e);
+			return false;
 		}
-		return null;
+		return true;
 	}
 	
-	protected void onPostExecute(Void result){
+	protected void onPostExecute(Boolean result){
 		pDialog.dismiss();
-		resetRunnables();
-		rtrue = new Runnable(){
-			
-			@Override
-			public void run() {
-				try {
-					mCommon.executeSuShell("reboot");
-				} catch (RootAccessDeniedException e) {
-					mNotifyer.showExceptionToast(e);
+
+		if (result) {
+			resetRunnables();
+			rtrue = new Runnable(){
+
+				@Override
+				public void run() {
+					try {
+						mCommon.executeSuShell("reboot");
+					} catch (RootAccessDeniedException e) {
+						mNotifyer.showExceptionToast(e);
+					}
 				}
-			}
-		};
-		mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
-		reloadUI.run();
-        Appirater.appLaunched(mContext);
+			};
+        	rfalse = new Runnable() {
+        	    @Override
+        	    public void run() {
+        	        Appirater.appLaunched(mContext);
+        	    }
+        	};
+			mNotifyer.createAlertDialog(R.string.information, R.string.completeinstallation, rtrue, null, rfalse).show();
+			reloadUI.run();
+		} else {
+			mNotifyer.createDialog(R.string.warning, R.string.install_failed, true, false).show();
+		}
     }
 	
 	protected void onProgressUpdate(Integer... states) {
@@ -129,7 +138,6 @@ public class Installer extends AsyncTask <Boolean, Integer, Void>{
 
     public void resetRunnables(){
         rtrue = Notifyer.rEmpty;
-        rneutral = Notifyer.rEmpty;
         rfalse = Notifyer.rEmpty;
     }
 

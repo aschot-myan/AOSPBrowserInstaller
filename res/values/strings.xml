@@ -2,21 +2,17 @@
 <resources>
 
     <string name="app_name">AOSP Browser Installer</string>
-    <string name="action_settings">Settings</string>
-    
-    <string name="installer">Installer</string>
-    <string name="uninstaller">Uninstaller</string>
+
+    <string name="installing">Installing</string>
+    <string name="uninstalling">Uninstalling</string>
     <string name="installed">AOSP Browser is installed</string>
-    <string name="with_sync">%s (with ChromeSync)</string>
+    <string name="with_sync_ins">%s (with ChromeSync)</string>
     <string name="notinstalled">AOSP Browser is not installed.</string>
+    <string name="install_failed">Install failed... Root?</string>
+    <string name="uninstall_failed">Uninstall failed... Root?</string>
     
     <string name="warning">Warning!</string>
     <string name="notsupported">Device not supported by developer.\nIf you want to continue, doing so at your own risk.</string>
-
-    <string name="empty"></string>
-    <string name="addsync">Would you like to add Sync?</string>
-	<string name="option">Option</string>
-	<string name="loading">Loading</string>
 	
 	<string name="mount">Mounting /system as RW</string>
 	<string name="unmount">Mounting /system as RO</string>
@@ -26,18 +22,16 @@
 	<string name="clean">Deleting unneeded files</string>
 	
 	<string name="install">Install</string>
-	<string name="installing">Installing</string>
-	<string name="checking_files">Checking files</string>
+    <string name="with_sync">With ChromeSync</string>
+    <string name="without_sync">Without ChromeSync</string>
 	<string name="unpacksync">Unpacking ChromeBookmarksSyncAdapter.apk</string>
 	<string name="pushbrowser">Pushing AOSP Browser in to SystemApps directory</string>
 	<string name="pushsync">Pushing ChromeSync in to SystemApps directory</string>
 	<string name="setpermissions">Setting permissions to 644</string>
 	<string name="uninstall">Uninstall</string>
-	<string name="uninstalling">Uninstalling</string>
-	<string name="deleteaosp">Deleting AOSP Browser from SystemApps directory</string>
-	<string name="deletesync">Deleting ChromeSync from SystemApps directory</string>
 
 	<string name="information">Information</string>
+    <string name="download_now">Download Browser.apk now?</string>
 	<string name="completeinstallation">You should Reboot to complete your installation.\nReboot now?</string>
 	<string name="completeuninstallation">You should Reboot to complete your uninstallation.\nReboot now?</string>
 
@@ -49,6 +43,8 @@
         <item>0,50 Euro</item>
         <item>1 Euro</item>
         <item>2 Euros</item>
+        <item>3 Euros</item>
+        <item>5 Euros</item>
     </string-array>
 
 </resources>

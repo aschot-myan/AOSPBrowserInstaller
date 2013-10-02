@@ -18,6 +18,15 @@ You can find the source code on GitHub: https://github.com/ashotmkrtchyan1995/AO
 CHANGELOG
 ====================
 
+Update [3.0.2]
+
+-Better download error detection (Cleare files of app or reinstall app)
+-Install fixed
+
+Update [3.0.1]
+
+-Small update with faster installer/uninstaller
+
 Update [3.0]
 
 -Donations added

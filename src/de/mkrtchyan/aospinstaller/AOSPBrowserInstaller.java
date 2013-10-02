@@ -34,10 +34,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.ads.AdView;
+import com.devspark.appmsg.AppMsg;
 
 import java.io.File;
 
@@ -52,6 +53,8 @@ public class AOSPBrowserInstaller extends Activity {
     private final Notifyer mNotifyer = new Notifyer(mContext);
     private final Common mCommon = new Common();
 
+    private View view;
+
 	private static final String Device = Build.DEVICE;
     public static final File SystemApps = new File("/system/app");
     public static final File browser = new File(SystemApps, "Browser.apk");
@@ -61,6 +64,7 @@ public class AOSPBrowserInstaller extends Activity {
     public static final File bppapkold = new File(SystemApps, "BrowserProviderProxy.apk.old");
     public static final File bppodex = new File(SystemApps, "BrowserProviderProxy.odex");
     public static final File bppodexold = new File(SystemApps, "BrowserProviderProxy.odex.old");
+	String name;
 	final Runnable reloadUI = new Runnable(){
 
 		@Override
@@ -78,7 +82,7 @@ public class AOSPBrowserInstaller extends Activity {
 				ivIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher_browser));
 				pbInstallation.setProgress(1);
 				if (chromesync.exists()){
-					tvInfo.setText(String.format(mContext.getString(R.string.with_sync), mContext.getText(R.string.installed)));
+					tvInfo.setText(String.format(getString(R.string.with_sync_ins), getString(R.string.installed)));
 				}
 			} else {
 				tvInfo.setText(R.string.notinstalled);
@@ -87,14 +91,52 @@ public class AOSPBrowserInstaller extends Activity {
 				ivIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher_browserun));
 			}
 		}
-	};;
-	Runnable rtrue, rneutral, rfalse, doWork;
+	};
+	final Runnable doWork = new Runnable() {
+        @Override
+        public void run() {
+            if (!browser.exists()) {
+                PopupMenu popup = new PopupMenu(mContext, view);
+                MenuInflater inflater = popup.getMenuInflater();
+	            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+		            @Override
+		            public boolean onMenuItemClick(MenuItem item) {
+			            switch (item.getItemId()) {
+				            case R.id.iWithSync:
+					            new Installer(mContext, reloadUI).execute(true);
+					            return true;
+				            case R.id.iWithoutSync:
+					            new Installer(mContext, reloadUI).execute(false);
+					            return true;
+				            default:
+					            return false;
+			            }
+		            }
+	            });
+                inflater.inflate(R.menu.install_popup, popup.getMenu());
+                popup.show();
+            } else {
+                new Uninstaller(mContext, reloadUI).execute();
+            }
+        }
+    };
+	final Runnable download = new Runnable() {
+		@Override
+		public void run() {
+			Downloader downloader = new Downloader(mContext, "http://dslnexus.nazuka.net", name, browserapk, doWork);
+			File sample = new File(mContext.getFilesDir(), "sample");
+			mCommon.pushFileFromRAW(mContext, sample, R.raw.corrupt_download);
+			downloader.setSampleCorruptFile(sample);
+			downloader.setCheckFile(true);
+			downloader.execute();
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.aosp_installer);
 
         browserapk = new File(mContext.getFilesDir(), "Browser.apk");
 
@@ -104,51 +146,27 @@ public class AOSPBrowserInstaller extends Activity {
         }
 
 		Log.i(TAG, "started");
-
-		resetRunnables();
 		
         if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia")) {
 			mNotifyer.createDialog(R.string.warning, R.string.notsupported, true, true).show();
 		}
-		reloadUI.run();
         try {
             if (!mCommon.getBooleanPerf(mContext, "config", "show_ads")) {
-                AdView adView = (AdView) findViewById(R.id.adView);
-                ((ViewGroup) adView.getParent()).removeView(adView);
+                ((ViewGroup) findViewById(R.id.adView).getParent()).removeView(findViewById(R.id.adView));
             }
         } catch (NullPointerException e) {
             mNotifyer.showExceptionToast(e);
         }
-
-        doWork = new Runnable() {
-            @Override
-            public void run() {
-                if (!browser.exists()) {
-                    rtrue = new Runnable(){
-
-                        @Override
-                        public void run() {
-                            new Installer(mContext, reloadUI).execute(true);
-                        }
-                    };
-                    rneutral = new Runnable(){
-
-                        @Override
-                        public void run() {
-                            new Installer(mContext, reloadUI).execute(false);
-                        }
-                    };
-                    mNotifyer.createAlertDialog(R.string.option, R.string.addsync, rtrue, rneutral, rfalse).show();
-                } else {
-                    new Uninstaller(mContext, reloadUI).execute();
-                }
-            }
-        };
+		reloadUI.run();
+		if (Build.VERSION.SDK_INT > 17)
+			name = "browser_43.apk";
+		else
+			name = "browser_42.apk";
 	}
 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.aosp_menu, menu);
         return true;
     }
 
@@ -171,12 +189,8 @@ public class AOSPBrowserInstaller extends Activity {
                 startActivity(new Intent(this, DonationsActivity.class));
                 return true;
             case R.id.iShowAds:
-                if (mCommon.getBooleanPerf(mContext, "config", "show_ads")) {
-                    mCommon.setBooleanPerf(mContext, "config", "show_ads", false);
-                } else {
-                    mCommon.setBooleanPerf(mContext, "config", "show_ads", true);
-                }
-                mNotifyer.showToast(R.string.please_restart);
+                mCommon.setBooleanPerf(mContext, "config", "show_ads", !mCommon.getBooleanPerf(mContext, "config", "show_ads"));
+                mNotifyer.showToast(R.string.please_restart, AppMsg.STYLE_INFO);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -185,27 +199,21 @@ public class AOSPBrowserInstaller extends Activity {
 
 	public void Go(View view){
 
-        if (!mCommon.suRecognition()){
+        this.view = view;
+        if (!mCommon.suRecognition() && !BuildConfig.DEBUG){
             mNotifyer.showRootDeniedDialog();
         } else {
+            if (!browserapk.exists()) {
+	            mNotifyer.createAlertDialog(R.string.warning, R.string.download_now, download, null, new Runnable() {
+		            @Override
+		            public void run() {
 
-            if (!browser.exists()) {
-                String name = "";
-                if (Build.VERSION.SDK_INT > 17)
-                    name = "browser_43.apk";
-                else
-                    name = "browser_42.apk";
-                new Downloader(mContext, "http://dslnexus.nazuka.net", name, browserapk, doWork).execute();
+		            }
+	            }).show();
             } else {
                 doWork.run();
             }
 
         }
-	}
-
-	public void resetRunnables(){
-        rtrue = Notifyer.rEmpty;
-		rneutral = Notifyer.rEmpty;
-		rfalse = Notifyer.rEmpty;
 	}
 }

@@ -25,24 +25,25 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.devspark.appmsg.AppMsg;
 import com.sbstrm.appirater.Appirater;
 
-import org.sufficientlysecure.rootcommands.util.RootAccessDeniedException;
+import org.rootcommands.util.RootAccessDeniedException;
 
 import java.io.File;
 
 import de.mkrtchyan.utils.Common;
 import de.mkrtchyan.utils.Notifyer;
 
-public class Uninstaller extends AsyncTask <Void, Integer, Void>{
+public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 
-	Context mContext;
-	Notifyer mNotifyer;
-	Common mCommon = new Common();
-	ProgressDialog pDialog;
-	File busybox;
+	private Context mContext;
+	private Notifyer mNotifyer;
+	private Common mCommon = new Common();
+	private ProgressDialog pDialog;
+	private File busybox;
 	
-	Runnable rtrue, rneutral, rfalse, reloadUI;
+	private Runnable rtrue, rfalse, reloadUI;
 
 	
 	public Uninstaller(Context mContext, Runnable reloadUI){
@@ -50,13 +51,13 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 		this.reloadUI = reloadUI;
 		mNotifyer = new Notifyer(mContext);
 		busybox = new File(mContext.getFilesDir(), "busybox");
+        mCommon.chmod(busybox, "741");
 	}
 	
 	protected void onPreExecute(){
-		resetRunnables();
 		pDialog = new ProgressDialog(mContext);
 		pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		pDialog.setTitle(R.string.uninstaller);
+		pDialog.setTitle(R.string.uninstalling);
 		pDialog.setMax(4);
 		pDialog.setCancelable(false);
 		pDialog.show();
@@ -64,16 +65,16 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 	}
 
 	@Override
-	protected Void doInBackground(Void... options) {
+	protected Boolean doInBackground(Void... options) {
 		try {
             publishProgress(R.string.mount, 1);
             mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RW");
             publishProgress(R.string.restore, 2);
             if (AOSPBrowserInstaller.bppapkold.exists() && !AOSPBrowserInstaller.bppapk.exists()) {
-                copy(AOSPBrowserInstaller.bppapkold, AOSPBrowserInstaller.bppapk);
+                move(AOSPBrowserInstaller.bppapkold, AOSPBrowserInstaller.bppapk);
             }
             if (AOSPBrowserInstaller.bppodexold.exists() && !AOSPBrowserInstaller.bppodex.exists()){
-                copy(AOSPBrowserInstaller.bppodexold, AOSPBrowserInstaller.bppodex);
+                move(AOSPBrowserInstaller.bppodexold, AOSPBrowserInstaller.bppodex);
             }
             publishProgress(R.string.clean, 3);
             mCommon.executeSuShell("rm " + AOSPBrowserInstaller.browser.getAbsolutePath());
@@ -84,33 +85,42 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
             mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RO");
         } catch (RootAccessDeniedException e) {
             mNotifyer.showExceptionToast(e);
+			return false;
         }
-		return null;
+		return true;
 	}
 
     public void resetRunnables(){
         rtrue = Notifyer.rEmpty;
-        rneutral = Notifyer.rEmpty;
         rfalse = Notifyer.rEmpty;
     }
 	
-	protected void onPostExecute(Void result){
+	protected void onPostExecute(Boolean result){
 		pDialog.dismiss();
-		resetRunnables();
-		rtrue = new Runnable(){
-			
-			@Override
-			public void run() {
-                try {
-				    mCommon.executeSuShell("reboot");
-                } catch (RootAccessDeniedException e) {
-                    mNotifyer.showExceptionToast(e);
-                }
-			}
-		};
-		mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
-		reloadUI.run();
-        Appirater.appLaunched(mContext);
+		if (result) {
+			resetRunnables();
+			rtrue = new Runnable(){
+
+				@Override
+				public void run() {
+        	        try {
+					    mCommon.executeSuShell("reboot");
+        	        } catch (RootAccessDeniedException e) {
+        	            mNotifyer.showExceptionToast(e);
+        	        }
+				}
+			};
+        	rfalse = new Runnable() {
+        	    @Override
+        	    public void run() {
+        	        Appirater.appLaunched(mContext);
+        	    }
+        	};
+			mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
+			reloadUI.run();
+		} else {
+			mNotifyer.showToast(R.string.uninstall_failed, AppMsg.STYLE_ALERT);
+		}
     }
 
 	protected void onProgressUpdate(Integer... states) {
@@ -118,7 +128,7 @@ public class Uninstaller extends AsyncTask <Void, Integer, Void>{
 		pDialog.setProgress(states[1]);
 	}
 
-	public void copy(File source, File destination) throws RootAccessDeniedException {
+	public void move(File source, File destination) throws RootAccessDeniedException {
 		mCommon.executeSuShell(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
 	}
 
