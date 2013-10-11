@@ -49,6 +49,9 @@ import de.mkrtchyan.utils.Notifyer;
 public class AOSPBrowserInstaller extends Activity {
 
 	private static final String TAG = "AOSPBrowserInstaller";
+    private static final String PREF_NAME = "prefs";
+    private static final String PREF_FIRST_RUN = "first_run";
+    private static final String PREF_SHOW_ADS = "show_ads";
     private final Context mContext = this;
     private final Notifyer mNotifyer = new Notifyer(mContext);
     private final Common mCommon = new Common();
@@ -123,11 +126,8 @@ public class AOSPBrowserInstaller extends Activity {
 	final Runnable download = new Runnable() {
 		@Override
 		public void run() {
-			Downloader downloader = new Downloader(mContext, "http://dslnexus.nazuka.net", name, browserapk, doWork);
-			File sample = new File(mContext.getFilesDir(), "sample");
-			mCommon.pushFileFromRAW(mContext, sample, R.raw.corrupt_download);
-			downloader.setSampleCorruptFile(sample);
-			downloader.setCheckFile(true);
+			Downloader downloader = new Downloader(mContext, "http://dslnexus.org/Android", name, browserapk, doWork);
+			downloader.setRetry(true);
 			downloader.execute();
 		}
 	};
@@ -140,18 +140,19 @@ public class AOSPBrowserInstaller extends Activity {
 
         browserapk = new File(mContext.getFilesDir(), "Browser.apk");
 
-        if (!mCommon.getBooleanPerf(mContext, "config", "firststart")) {
-            mCommon.setBooleanPerf(mContext, "config", "firststart", true);
-            mCommon.setBooleanPerf(mContext, "config", "show_ads", true);
+        if (!mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_FIRST_RUN)) {
+            mCommon.setBooleanPerf(mContext, PREF_NAME, PREF_FIRST_RUN, true);
+            mCommon.setBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS, true);
         }
 
 		Log.i(TAG, "started");
 		
-        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia")) {
+        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia") && !Device.equals("deb")
+		         && !Device.equals("flo")) {
 			mNotifyer.createDialog(R.string.warning, R.string.notsupported, true, true).show();
 		}
         try {
-            if (!mCommon.getBooleanPerf(mContext, "config", "show_ads")) {
+            if (!mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS)) {
                 ((ViewGroup) findViewById(R.id.adView).getParent()).removeView(findViewById(R.id.adView));
             }
         } catch (NullPointerException e) {
@@ -176,7 +177,7 @@ public class AOSPBrowserInstaller extends Activity {
         super.onPrepareOptionsMenu(menu);
         try {
             MenuItem iShowAds = menu.findItem(R.id.iShowAds);
-            iShowAds.setChecked(mCommon.getBooleanPerf(mContext, "config", "show_ads"));
+            iShowAds.setChecked(mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS));
         } catch (NullPointerException e) {
             mNotifyer.showExceptionToast(e);
         }
@@ -189,7 +190,7 @@ public class AOSPBrowserInstaller extends Activity {
                 startActivity(new Intent(this, DonationsActivity.class));
                 return true;
             case R.id.iShowAds:
-                mCommon.setBooleanPerf(mContext, "config", "show_ads", !mCommon.getBooleanPerf(mContext, "config", "show_ads"));
+                mCommon.setBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS, !mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS));
                 mNotifyer.showToast(R.string.please_restart, AppMsg.STYLE_INFO);
                 return true;
             default:
@@ -203,7 +204,7 @@ public class AOSPBrowserInstaller extends Activity {
         if (!mCommon.suRecognition() && !BuildConfig.DEBUG){
             mNotifyer.showRootDeniedDialog();
         } else {
-            if (!browserapk.exists()) {
+            if (!browserapk.exists() && ((Button)view).getText().toString().equals(getString(R.string.install))) {
 	            mNotifyer.createAlertDialog(R.string.warning, R.string.download_now, download, null, new Runnable() {
 		            @Override
 		            public void run() {

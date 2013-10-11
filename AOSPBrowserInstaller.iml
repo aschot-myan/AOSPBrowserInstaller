@@ -19,24 +19,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Libs/android-support-v4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Libs/root-commands-1.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../Libs/GoogleAdMobAdsSdk.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -45,6 +27,7 @@
     </orderEntry>
     <orderEntry type="module" module-name="AppiRater" />
     <orderEntry type="module" module-name="AppMsg" />
+    <orderEntry type="library" name="android-support-v13" level="project" />
   </component>
 </module>
 
