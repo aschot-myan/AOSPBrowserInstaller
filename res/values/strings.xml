@@ -8,8 +8,8 @@
     <string name="installed">AOSP Browser is installed</string>
     <string name="with_sync_ins">%s (with ChromeSync)</string>
     <string name="notinstalled">AOSP Browser is not installed.</string>
-    <string name="install_failed">Install failed&#8230; Root?</string>
-    <string name="uninstall_failed">Uninstall failed&#8230; Root?</string>
+    <string name="install_process_failed">Install failed&#8230; Root?</string>
+    <string name="uninstall_process_failed">Uninstall failed&#8230; Root?</string>
     
     <string name="warning">Warning!</string>
     <string name="notsupported">Device not supported by developer.\nIf you want to continue, doing so at your own risk.</string>
@@ -46,5 +46,8 @@
         <item>3 Euros</item>
         <item>5 Euros</item>
     </string-array>
+
+    <string name="install_cm">Install CyanogenMOD-Browser</string>
+    <string name="install_failed">Install failed on your device. Please try it again with the CyanogenMOD-Browser</string>
 
 </resources>

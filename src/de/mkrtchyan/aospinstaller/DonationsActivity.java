@@ -34,8 +34,6 @@ import donations.DonationsFragment;
 
 public class DonationsActivity extends FragmentActivity {
 
-	private LinearLayout Layout;
-
     /**
      * Google
      */
@@ -63,18 +61,18 @@ public class DonationsActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-	    Layout = new LinearLayout(this);
-	    Layout.setOrientation(LinearLayout.VERTICAL);
-	    Layout.setId(1);
+        LinearLayout layout = new LinearLayout(this);
+	    layout.setOrientation(LinearLayout.VERTICAL);
+	    layout.setId(1);
 
-        setContentView(Layout);
+        setContentView(layout);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         DonationsFragment donationsFragment;
         donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, GOOGLE_PLAY, GOOGLE_PUBKEY, GOOGLE_CATALOG,
                 getResources().getStringArray(R.array.donation_google_catalog_values), PAYPAL, PAYPAL_USER, PAYPAL_CURRENCY_CODE, PAYPAL_ITEM_NAME, FLATTR, FLATTR_PROJECT_URL, FLATTR_URL);
 
-        ft.replace(Layout.getId(), donationsFragment, "donationsFragment");
+        ft.replace(layout.getId(), donationsFragment, "donationsFragment");
         ft.commit();
     }
 

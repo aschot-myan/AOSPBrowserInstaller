@@ -14,7 +14,7 @@ package de.mkrtchyan.aospinstaller;
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -25,9 +25,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.devspark.appmsg.AppMsg;
-import com.sbstrm.appirater.Appirater;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -40,10 +38,9 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 
 	final private Context mContext;
 	final private Notifyer mNotifyer;
-	final private Common mCommon = new Common();
 	private ProgressDialog pDialog;
 	final private File busybox;
-	
+
 	private Runnable rtrue, rfalse, reloadUI;
 
 	
@@ -63,11 +60,11 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 		pDialog.show();
         Log.i(TAG, "Preparing uninstall");
 		try {
-			mCommon.pushFileFromRAW(mContext, busybox, R.raw.busybox);
+			Common.pushFileFromRAW(mContext, busybox, R.raw.busybox, true);
+            Common.chmod(busybox, "741");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        mCommon.chmod(busybox, "741");
 	}
 
 	@Override
@@ -75,7 +72,7 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 		try {
             publishProgress(R.string.mount, 1);
             Log.i(TAG, mContext.getString(R.string.mount));
-            mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RW");
+            Common.mountDir(AOSPBrowserInstaller.SystemApps, "RW");
             publishProgress(R.string.restore, 2);
             Log.i(TAG, mContext.getString(R.string.restore));
             if (AOSPBrowserInstaller.bppapkold.exists() && !AOSPBrowserInstaller.bppapk.exists()) {
@@ -86,15 +83,15 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
             }
             publishProgress(R.string.clean, 3);
             Log.i(TAG, mContext.getString(R.string.clean));
-            mCommon.executeSuShell("rm " + AOSPBrowserInstaller.browser.getAbsolutePath());
+            Common.executeSuShell("rm " + AOSPBrowserInstaller.installed_browser.getAbsolutePath());
             if (AOSPBrowserInstaller.chromesync.exists()){
-                mCommon.executeSuShell("rm " + AOSPBrowserInstaller.chromesync.getAbsolutePath());
+                Common.executeSuShell("rm " + AOSPBrowserInstaller.chromesync.getAbsolutePath());
             }
             publishProgress(R.string.unmount, 4);
             Log.i(TAG, mContext.getString(R.string.unmount));
-            mCommon.mountDir(AOSPBrowserInstaller.SystemApps, "RO");
+            Common.mountDir(AOSPBrowserInstaller.SystemApps, "RO");
         } catch (Exception e) {
-            mNotifyer.showExceptionToast(e);
+            Notifyer.showExceptionToast(mContext, TAG, e);
             Log.i(TAG, e.getMessage());
 			return false;
         }
@@ -102,8 +99,18 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 	}
 
     public void resetRunnables(){
-        rtrue = Notifyer.rEmpty;
-        rfalse = Notifyer.rEmpty;
+        rtrue = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
+        rfalse = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
     }
 	
 	protected void onPostExecute(Boolean result){
@@ -115,22 +122,25 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 				@Override
 				public void run() {
         	        try {
-					    mCommon.executeSuShell("reboot");
+					    Common.executeSuShell("reboot");
         	        } catch (Exception e) {
-        	            mNotifyer.showExceptionToast(e);
+                        Notifyer.showExceptionToast(mContext, TAG, e);
         	        }
 				}
 			};
         	rfalse = new Runnable() {
         	    @Override
         	    public void run() {
-        	        Appirater.appLaunched(mContext);
+                    Notifyer.showAppRateDialog(mContext);
+                    reloadUI.run();
         	    }
         	};
 			mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
 			reloadUI.run();
 		} else {
-			mNotifyer.showToast(R.string.uninstall_failed, AppMsg.STYLE_ALERT);
+			Toast
+                    .makeText(mContext, R.string.uninstall_process_failed, Toast.LENGTH_SHORT)
+                    .show();
 		}
     }
 
@@ -140,7 +150,7 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 	}
 
 	public void move(File source, File destination) throws Exception {
-		mCommon.executeSuShell(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
+		Common.executeSuShell(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
 	}
 
 }

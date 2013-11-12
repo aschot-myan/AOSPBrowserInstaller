@@ -2,6 +2,14 @@
 CHANGELOG
 ====================
 
+Update [3.1]
+
+-Now SHA1 checking
+-Better installation checking
+-Now with choose (CM-Browser/AOSPBrowser)
+-Install/Uninstall improved
+-New APKs 4.4 and 4.3
+
 Update [3.0.3]
 
 -New Hoster (Clear files of app or reinstall app)

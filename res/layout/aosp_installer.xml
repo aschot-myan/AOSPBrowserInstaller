@@ -49,13 +49,23 @@
                 android:layout_height="wrap_content"
                 ads:adUnitId="ca-app-pub-3591384811135190/8913247793"
                 ads:adSize="SMART_BANNER"
-            ads:testDevices="538324DB6D51B29D9320AFDB7D564DFB, TEST_EMULATOR"
+                ads:testDevices="538324DB6D51B29D9320AFDB7D564DFB, TEST_EMULATOR"
                 ads:loadAdOnCreate="true"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"/>
+                android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/install_cm"
+            android:id="@+id/cbCyanogenmod"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:textAlignment="center"
+            android:checked="true" />
 
     </RelativeLayout>
-
-
 
 </LinearLayout>

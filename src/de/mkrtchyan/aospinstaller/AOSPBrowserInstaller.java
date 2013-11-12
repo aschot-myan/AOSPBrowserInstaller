@@ -14,7 +14,7 @@ package de.mkrtchyan.aospinstaller;
  * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
@@ -22,25 +22,29 @@ package de.mkrtchyan.aospinstaller;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.devspark.appmsg.AppMsg;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import de.mkrtchyan.utils.Common;
 import de.mkrtchyan.utils.Downloader;
@@ -52,22 +56,24 @@ public class AOSPBrowserInstaller extends Activity {
     private static final String PREF_NAME = "prefs";
     private static final String PREF_FIRST_RUN = "first_run";
     private static final String PREF_SHOW_ADS = "show_ads";
+
     private final Context mContext = this;
     private final Notifyer mNotifyer = new Notifyer(mContext);
-    private final Common mCommon = new Common();
-
-    private View view;
 
 	private static final String Device = Build.DEVICE;
     public static final File SystemApps = new File("/system/app");
-    public static final File browser = new File(SystemApps, "Browser.apk");
-    private File browserapk;
+    public static final File installed_browser = new File(SystemApps, "Browser.apk");
+    private File downloaded_browser, apk_sums;
     public static final File chromesync = new File(SystemApps, "ChromeBookmarksSyncAdapter.apk");
     public static final File bppapk = new File(SystemApps, "BrowserProviderProxy.apk");
     public static final File bppapkold = new File(SystemApps, "BrowserProviderProxy.apk.old");
     public static final File bppodex = new File(SystemApps, "BrowserProviderProxy.odex");
     public static final File bppodexold = new File(SystemApps, "BrowserProviderProxy.odex.old");
-	String name;
+
+    private boolean isBrowserInstalled = false;
+    private boolean isChromeSyncInstalled = false;
+    private boolean installFailed = false;
+
 	final Runnable reloadUI = new Runnable(){
 
 		@Override
@@ -78,56 +84,64 @@ public class AOSPBrowserInstaller extends Activity {
 			final TextView tvInfo = (TextView) findViewById(R.id.tvInfo);
 			final ImageView ivIcon = (ImageView) findViewById(R.id.ivIcon);
 
+            final PackageManager pm = getPackageManager();
+            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+            for (ApplicationInfo packageInfo : packages) {
+                if (packageInfo.packageName.equals("com.android.browser")) {
+                    isBrowserInstalled = true;
+                }
+                if (packageInfo.packageName.equals("com.google.android.syncadapters.bookmarks")) {
+                    isChromeSyncInstalled = true;
+                }
+            }
+
 			pbInstallation.setMax(1);
-			if (browser.exists()) {
+			if (isBrowserInstalled) {
 				tvInfo.setText(R.string.installed);
 				bGo.setText(R.string.uninstall);
 				ivIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher_browser));
 				pbInstallation.setProgress(1);
-				if (chromesync.exists()){
+				if (isChromeSyncInstalled){
 					tvInfo.setText(String.format(getString(R.string.with_sync_ins), getString(R.string.installed)));
 				}
+                findViewById(R.id.cbCyanogenmod).setVisibility(View.INVISIBLE);
 			} else {
 				tvInfo.setText(R.string.notinstalled);
 				pbInstallation.setProgress(0);
 				bGo.setText(R.string.install);
 				ivIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher_browserun));
+                findViewById(R.id.cbCyanogenmod).setVisibility(View.VISIBLE);
 			}
+            if (installFailed) {
+                bGo.setText(R.string.uninstall);
+            }
 		}
 	};
 	final Runnable doWork = new Runnable() {
         @Override
         public void run() {
-            if (!browser.exists()) {
-                PopupMenu popup = new PopupMenu(mContext, view);
+            if (downloaded_browser.exists()) {
+                PopupMenu popup = new PopupMenu(mContext, findViewById(R.id.bGo));
                 MenuInflater inflater = popup.getMenuInflater();
 	            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 		            @Override
 		            public boolean onMenuItemClick(MenuItem item) {
-			            switch (item.getItemId()) {
-				            case R.id.iWithSync:
-					            new Installer(mContext, reloadUI).execute(true);
-					            return true;
-				            case R.id.iWithoutSync:
-					            new Installer(mContext, reloadUI).execute(false);
-					            return true;
-				            default:
-					            return false;
-			            }
-		            }
+                        new Installer(mContext, reloadUI).execute(item.getItemId() == R.id.iWithSync);
+                        return true;
+                    }
 	            });
                 inflater.inflate(R.menu.install_popup, popup.getMenu());
                 popup.show();
-            } else {
-                new Uninstaller(mContext, reloadUI).execute();
             }
         }
     };
 	final Runnable download = new Runnable() {
 		@Override
 		public void run() {
-			Downloader downloader = new Downloader(mContext, "http://dslnexus.org/Android", name, browserapk, doWork);
-			downloader.setRetry(true);
+			Downloader downloader = new Downloader(mContext, "http://dslnexus.org/Android/AOSPBrowser", downloaded_browser.getName(), downloaded_browser, doWork);
+            downloader.setCancelable(true);
+            downloader.setChecksumFile(apk_sums);
 			downloader.execute();
 		}
 	};
@@ -138,31 +152,43 @@ public class AOSPBrowserInstaller extends Activity {
 
 		setContentView(R.layout.aosp_installer);
 
-        browserapk = new File(mContext.getFilesDir(), "Browser.apk");
-
-        if (!mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_FIRST_RUN)) {
-            mCommon.setBooleanPerf(mContext, PREF_NAME, PREF_FIRST_RUN, true);
-            mCommon.setBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS, true);
+        apk_sums = new File(mContext.getFilesDir(), "apk_sums");
+        try {
+            Common.pushFileFromRAW(mContext, apk_sums, R.raw.apk_sums, true);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        String FileName = "browser_" + Build.VERSION.SDK_INT + ".apk";
 
-		Log.i(TAG, "started");
+        if (((CheckBox) findViewById(R.id.cbCyanogenmod)).isChecked())
+            FileName = "cm_" + FileName;
+
+        downloaded_browser = new File(mContext.getFilesDir(), FileName);
+
+        if (!Common.getBooleanPref(mContext, PREF_NAME, PREF_FIRST_RUN)) {
+            Common.setBooleanPref(mContext, PREF_NAME, PREF_FIRST_RUN, true);
+            Common.setBooleanPref(mContext, PREF_NAME, PREF_SHOW_ADS, true);
+        }
 		
-        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta") && !Device.equals("tilapia") && !Device.equals("deb")
-		         && !Device.equals("flo")) {
+        if (!Device.equals("grouper") && !Device.equals("mako") && !Device.equals("manta")
+                && !Device.equals("tilapia") && !Device.equals("deb") && !Device.equals("flo")
+                && !Device.equals("hammerhead")) {
 			mNotifyer.createDialog(R.string.warning, R.string.notsupported, true, true).show();
 		}
-        try {
-            if (!mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS)) {
-                ((ViewGroup) findViewById(R.id.adView).getParent()).removeView(findViewById(R.id.adView));
-            }
-        } catch (NullPointerException e) {
-            mNotifyer.showExceptionToast(e);
+
+        if (!Common.getBooleanPref(mContext, PREF_NAME, PREF_SHOW_ADS)) {
+            ((ViewGroup) findViewById(R.id.adView).getParent()).removeView(findViewById(R.id.adView));
         }
+
 		reloadUI.run();
-		if (Build.VERSION.SDK_INT > 17)
-			name = "browser_43.apk";
-		else
-			name = "browser_42.apk";
+
+        if (!isBrowserInstalled && installed_browser.exists()) {
+            AlertDialog.Builder Alert = new AlertDialog.Builder(mContext);
+            Alert.setTitle(R.string.warning);
+
+            Alert.setMessage(R.string.install_failed);
+            Alert.show();
+        }
 	}
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -176,10 +202,9 @@ public class AOSPBrowserInstaller extends Activity {
 
         super.onPrepareOptionsMenu(menu);
         try {
-            MenuItem iShowAds = menu.findItem(R.id.iShowAds);
-            iShowAds.setChecked(mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS));
+            menu.findItem(R.id.iShowAds).setChecked(Common.getBooleanPref(mContext, PREF_NAME, PREF_SHOW_ADS));
         } catch (NullPointerException e) {
-            mNotifyer.showExceptionToast(e);
+            Notifyer.showExceptionToast(mContext, TAG, e);
         }
         return true;
     }
@@ -190,8 +215,10 @@ public class AOSPBrowserInstaller extends Activity {
                 startActivity(new Intent(this, DonationsActivity.class));
                 return true;
             case R.id.iShowAds:
-                mCommon.setBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS, !mCommon.getBooleanPerf(mContext, PREF_NAME, PREF_SHOW_ADS));
-                mNotifyer.showToast(R.string.please_restart, AppMsg.STYLE_INFO);
+                Common.setBooleanPref(mContext, PREF_NAME, PREF_SHOW_ADS, !Common.getBooleanPref(mContext, PREF_NAME, PREF_SHOW_ADS));
+                Toast
+                        .makeText(mContext, R.string.please_restart, Toast.LENGTH_SHORT)
+                        .show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -200,21 +227,23 @@ public class AOSPBrowserInstaller extends Activity {
 
 	public void Go(View view){
 
-        this.view = view;
-        if (!mCommon.suRecognition() && !BuildConfig.DEBUG){
+        if (!Common.suRecognition() && !BuildConfig.DEBUG){
             mNotifyer.showRootDeniedDialog();
         } else {
-            if (!browserapk.exists() && ((Button)view).getText().toString().equals(getString(R.string.install))) {
-	            mNotifyer.createAlertDialog(R.string.warning, R.string.download_now, download, null, new Runnable() {
-		            @Override
-		            public void run() {
+            if (!isBrowserInstalled) {
+                if (!downloaded_browser.exists()) {
+	                mNotifyer.createAlertDialog(R.string.warning, R.string.download_now, download, null, new Runnable() {
+		                @Override
+		                public void run() {
 
-		            }
-	            }).show();
+		                }
+	                }).show();
+                } else {
+                    doWork.run();
+                }
             } else {
-                doWork.run();
+                new Uninstaller(mContext, reloadUI).execute();
             }
-
         }
 	}
 }
