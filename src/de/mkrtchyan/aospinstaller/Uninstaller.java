@@ -136,12 +136,12 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
         	    }
         	};
 			mNotifyer.createAlertDialog(R.string.information, R.string.completeuninstallation, rtrue, null, rfalse).show();
-			reloadUI.run();
 		} else {
 			Toast
                     .makeText(mContext, R.string.uninstall_process_failed, Toast.LENGTH_SHORT)
                     .show();
 		}
+        reloadUI.run();
     }
 
 	protected void onProgressUpdate(Integer... states) {

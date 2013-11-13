@@ -40,15 +40,15 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
 	final private Notifyer mNotifyer;
 	private ProgressDialog pDialog;
 
-    final private File installed_apk, chromesyncapk, busybox;
+    final private File downloaded_apk, chromesyncapk, busybox;
 	
 	private Runnable rtrue, rfalse, reloadUI;
 	
-	public Installer(Context mContext, Runnable reloadUI){
+	public Installer(Context mContext, Runnable reloadUI, File APK){
 		this.mContext = mContext;
 		this.reloadUI = reloadUI;
 		mNotifyer = new Notifyer(mContext);
-		installed_apk = new File(mContext.getFilesDir(), "browser_" + Build.VERSION.SDK_INT + ".apk");
+		downloaded_apk = APK;
 		chromesyncapk = new File(mContext.getFilesDir(), "ChromeBookmarksSyncAdapter.apk");
 		busybox = new File(mContext.getFilesDir(), "busybox");
 	}
@@ -87,7 +87,7 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
 			}
 			publishProgress(R.string.pushbrowser, 3);
             Log.i(TAG, mContext.getString(R.string.pushbrowser));
-			copy(installed_apk, AOSPBrowserInstaller.installed_browser);
+			copy(downloaded_apk, AOSPBrowserInstaller.installed_browser);
 			publishProgress(R.string.setpermissions, 4);
             Log.i(TAG, mContext.getString(R.string.setpermissions));
 			Common.chmod(AOSPBrowserInstaller.installed_browser, "644");
@@ -138,10 +138,10 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
         	    }
         	};
 			mNotifyer.createAlertDialog(R.string.information, R.string.completeinstallation, rtrue, null, rfalse).show();
-			reloadUI.run();
 		} else {
 			mNotifyer.createDialog(R.string.warning, R.string.install_process_failed, true, false).show();
 		}
+        reloadUI.run();
     }
 	
 	protected void onProgressUpdate(Integer... states) {

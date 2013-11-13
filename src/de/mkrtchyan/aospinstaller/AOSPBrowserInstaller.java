@@ -71,8 +71,6 @@ public class AOSPBrowserInstaller extends Activity {
     public static final File bppodexold = new File(SystemApps, "BrowserProviderProxy.odex.old");
 
     private boolean isBrowserInstalled = false;
-    private boolean isChromeSyncInstalled = false;
-    private boolean installFailed = false;
 
 	final Runnable reloadUI = new Runnable(){
 
@@ -86,15 +84,17 @@ public class AOSPBrowserInstaller extends Activity {
 
             final PackageManager pm = getPackageManager();
             List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
+            boolean isChromeSyncInstalled = false;
             for (ApplicationInfo packageInfo : packages) {
                 if (packageInfo.packageName.equals("com.android.browser")) {
                     isBrowserInstalled = true;
                 }
                 if (packageInfo.packageName.equals("com.google.android.syncadapters.bookmarks")) {
-                    isChromeSyncInstalled = true;
+                    isChromeSyncInstalled = !chromesync.exists();
                 }
             }
+
+            boolean installFailed = isBrowserInstalled && !installed_browser.exists();
 
 			pbInstallation.setMax(1);
 			if (isBrowserInstalled) {
@@ -127,7 +127,7 @@ public class AOSPBrowserInstaller extends Activity {
 	            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 		            @Override
 		            public boolean onMenuItemClick(MenuItem item) {
-                        new Installer(mContext, reloadUI).execute(item.getItemId() == R.id.iWithSync);
+                        new Installer(mContext, reloadUI, downloaded_browser).execute(item.getItemId() == R.id.iWithSync);
                         return true;
                     }
 	            });
@@ -158,12 +158,6 @@ public class AOSPBrowserInstaller extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String FileName = "browser_" + Build.VERSION.SDK_INT + ".apk";
-
-        if (((CheckBox) findViewById(R.id.cbCyanogenmod)).isChecked())
-            FileName = "cm_" + FileName;
-
-        downloaded_browser = new File(mContext.getFilesDir(), FileName);
 
         if (!Common.getBooleanPref(mContext, PREF_NAME, PREF_FIRST_RUN)) {
             Common.setBooleanPref(mContext, PREF_NAME, PREF_FIRST_RUN, true);
@@ -230,6 +224,12 @@ public class AOSPBrowserInstaller extends Activity {
         if (!Common.suRecognition() && !BuildConfig.DEBUG){
             mNotifyer.showRootDeniedDialog();
         } else {
+            String FileName = "browser_" + Build.VERSION.SDK_INT + ".apk";
+
+            if (((CheckBox) findViewById(R.id.cbCyanogenmod)).isChecked())
+                FileName = "cm_" + FileName;
+
+            downloaded_browser = new File(mContext.getFilesDir(), FileName);
             if (!isBrowserInstalled) {
                 if (!downloaded_browser.exists()) {
 	                mNotifyer.createAlertDialog(R.string.warning, R.string.download_now, download, null, new Runnable() {

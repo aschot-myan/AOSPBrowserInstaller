@@ -2,6 +2,10 @@
 CHANGELOG
 ====================
 
+Update [3.1.1]
+
+-Install and installation recognition fixed
+
 Update [3.1]
 
 -Now SHA1 checking
