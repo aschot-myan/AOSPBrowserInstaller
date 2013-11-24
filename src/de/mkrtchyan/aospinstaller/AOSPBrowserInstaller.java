@@ -224,7 +224,16 @@ public class AOSPBrowserInstaller extends Activity {
         if (!Common.suRecognition() && !BuildConfig.DEBUG){
             mNotifyer.showRootDeniedDialog();
         } else {
-            String FileName = "browser_" + Build.VERSION.SDK_INT + ".apk";
+            String FileName = "";
+            if (Build.VERSION.SDK_INT  == 19) {
+                FileName = "browser_19.apk";
+            } else {
+                if (Build.VERSION.SDK_INT == 18) {
+                    FileName = "browser_43.apk";
+                } else {
+                    FileName = "browser_42.apk";
+                }
+            }
 
             if (((CheckBox) findViewById(R.id.cbCyanogenmod)).isChecked())
                 FileName = "cm_" + FileName;

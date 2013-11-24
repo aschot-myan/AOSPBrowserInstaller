@@ -2,6 +2,10 @@
 CHANGELOG
 ====================
 
+Update [3.2]
+
+-New APKs, install issues fixed
+
 Update [3.1.1]
 
 -Install and installation recognition fixed
