@@ -59,7 +59,6 @@
             android:text="@string/install_cm"
             android:id="@+id/cbCyanogenmod"
             android:textAlignment="center"
-            android:checked="true"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true" />

@@ -2,6 +2,15 @@
 CHANGELOG
 ====================
 
+Update [3.3]
+
+-All issues with lower 4.4 fixed
+
+Issues
+
+-4.4 Devices CAN'T use 4.3 APK
+-4.4 Browser crash on Incognito-tab
+
 Update [3.2]
 
 -New APKs, install issues fixed
