@@ -27,7 +27,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
+import org.sufficientlysecure.rootcommands.Shell;
+import org.sufficientlysecure.rootcommands.util.FailedExecuteCommand;
+
 import java.io.File;
+import java.io.IOException;
 
 import de.mkrtchyan.utils.Common;
 import de.mkrtchyan.utils.Notifyer;
@@ -39,15 +43,17 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
 	final private Context mContext;
 	final private Notifyer mNotifyer;
 	private ProgressDialog pDialog;
+    private Shell mShell;
 
     final private File downloaded_apk, chromesyncapk, busybox;
 	
 	private Runnable rtrue, rfalse, reloadUI;
 	
-	public Installer(Context mContext, Runnable reloadUI, File APK){
+	public Installer(Context mContext, Shell mShell, Runnable reloadUI, File APK){
 		this.mContext = mContext;
 		this.reloadUI = reloadUI;
-		mNotifyer = new Notifyer(mContext);
+        this.mShell = mShell;
+        mNotifyer = new Notifyer(mContext);
 		downloaded_apk = APK;
 		chromesyncapk = new File(mContext.getFilesDir(), "ChromeBookmarksSyncAdapter.apk");
 		busybox = new File(mContext.getFilesDir(), "busybox");
@@ -63,7 +69,7 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
         Log.i(TAG, "Preparing installation");
 		try {
 			Common.pushFileFromRAW(mContext, busybox, R.raw.busybox, true);
-            Common.chmod(busybox, "741");
+            Common.chmod(mShell, busybox, "741");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -90,7 +96,7 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
 			copy(downloaded_apk, AOSPBrowserInstaller.installed_browser);
 			publishProgress(R.string.setpermissions, 4);
             Log.i(TAG, mContext.getString(R.string.setpermissions));
-			Common.chmod(AOSPBrowserInstaller.installed_browser, "644");
+			Common.chmod(mShell, AOSPBrowserInstaller.installed_browser, "644");
 			if (options[0] && !AOSPBrowserInstaller.chromesync.exists()){
 				publishProgress(R.string.unpacksync, 5);
                 Log.i(TAG, mContext.getString(R.string.unpacksync));
@@ -100,7 +106,7 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
 				move(chromesyncapk, AOSPBrowserInstaller.chromesync);
 				publishProgress(R.string.setpermissions, 7);
                 Log.i(TAG, mContext.getString(R.string.setpermissions));
-				Common.chmod(AOSPBrowserInstaller.chromesync, "644");
+				Common.chmod(mShell, AOSPBrowserInstaller.chromesync, "644");
 			}
 			publishProgress(R.string.unmount, 8);
             Log.i(TAG, mContext.getString(R.string.unmount));
@@ -123,12 +129,12 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
 
 				@Override
 				public void run() {
-					try {
-						Common.executeSuShell("reboot");
-					} catch (Exception e) {
-                        Notifyer.showExceptionToast(mContext, TAG, e);
-					}
-				}
+                    try {
+                        mShell.execCommand("reboot");
+                    } catch (FailedExecuteCommand failedExecuteCommand) {
+                        failedExecuteCommand.printStackTrace();
+                    }
+                }
 			};
         	rfalse = new Runnable() {
         	    @Override
@@ -165,10 +171,10 @@ public class Installer extends AsyncTask <Boolean, Integer, Boolean>{
     }
 
 	public void move(File source, File destination) throws Exception {
-		Common.executeSuShell(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
+		mShell.execCommand(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
 	}
 
     public void copy(File source, File destination) throws Exception {
-        Common.executeSuShell(busybox.getAbsolutePath() + " cp " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
+        mShell.execCommand(busybox.getAbsolutePath() + " cp " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
     }
 }

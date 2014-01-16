@@ -14,8 +14,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Utils-Library" />
-    <orderEntry type="library" name="GoogleAdMobAdsSdk" level="project" />
     <orderEntry type="library" name="android-support-v13" level="project" />
+    <orderEntry type="module" module-name="root-commands" />
+    <orderEntry type="library" name="GoogleAdMobAdsSdk" level="project" />
   </component>
 </module>
 

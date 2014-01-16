@@ -27,6 +27,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.sufficientlysecure.rootcommands.Shell;
+import org.sufficientlysecure.rootcommands.util.FailedExecuteCommand;
+
 import java.io.File;
 
 import de.mkrtchyan.utils.Common;
@@ -38,15 +41,17 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 
 	final private Context mContext;
 	final private Notifyer mNotifyer;
+    final private Shell mShell;
 	private ProgressDialog pDialog;
 	final private File busybox;
 
 	private Runnable rtrue, rfalse, reloadUI;
 
 	
-	public Uninstaller(Context mContext, Runnable reloadUI){
+	public Uninstaller(Context mContext, Shell mShell, Runnable reloadUI){
 		this.mContext = mContext;
 		this.reloadUI = reloadUI;
+        this.mShell = mShell;
 		mNotifyer = new Notifyer(mContext);
 		busybox = new File(mContext.getFilesDir(), "busybox");
 	}
@@ -61,7 +66,7 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
         Log.i(TAG, "Preparing uninstall");
 		try {
 			Common.pushFileFromRAW(mContext, busybox, R.raw.busybox, true);
-            Common.chmod(busybox, "741");
+            Common.chmod(mShell, busybox, "741");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -83,9 +88,9 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
             }
             publishProgress(R.string.clean, 3);
             Log.i(TAG, mContext.getString(R.string.clean));
-            Common.executeSuShell("rm " + AOSPBrowserInstaller.installed_browser.getAbsolutePath());
+            mShell.execCommand("rm " + AOSPBrowserInstaller.installed_browser.getAbsolutePath());
             if (AOSPBrowserInstaller.chromesync.exists()){
-                Common.executeSuShell("rm " + AOSPBrowserInstaller.chromesync.getAbsolutePath());
+                mShell.execCommand("rm " + AOSPBrowserInstaller.chromesync.getAbsolutePath());
             }
             publishProgress(R.string.unmount, 4);
             Log.i(TAG, mContext.getString(R.string.unmount));
@@ -121,12 +126,12 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 
 				@Override
 				public void run() {
-        	        try {
-					    Common.executeSuShell("reboot");
-        	        } catch (Exception e) {
-                        Notifyer.showExceptionToast(mContext, TAG, e);
-        	        }
-				}
+                    try {
+                        mShell.execCommand("reboot");
+                    } catch (FailedExecuteCommand failedExecuteCommand) {
+                        failedExecuteCommand.printStackTrace();
+                    }
+                }
 			};
         	rfalse = new Runnable() {
         	    @Override
@@ -149,8 +154,7 @@ public class Uninstaller extends AsyncTask <Void, Integer, Boolean>{
 		pDialog.setProgress(states[1]);
 	}
 
-	public void move(File source, File destination) throws Exception {
-		Common.executeSuShell(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
+	public void move(File source, File destination) throws FailedExecuteCommand {
+        mShell.execCommand(busybox.getAbsolutePath() + " mv " + source.getAbsolutePath() + " " + destination.getAbsolutePath());
 	}
-
 }

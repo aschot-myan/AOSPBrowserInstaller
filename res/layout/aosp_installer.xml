@@ -42,7 +42,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-        <com.google.ads.AdView xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+        <com.google.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
             android:id="@+id/adView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +52,7 @@
             ads:testDevices="TEST_EMULATOR"
             ads:loadAdOnCreate="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"/>
 
         <CheckBox
             android:layout_width="wrap_content"

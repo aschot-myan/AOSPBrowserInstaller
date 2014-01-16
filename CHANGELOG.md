@@ -2,6 +2,11 @@
 CHANGELOG
 ====================
 
+Update [3.3.1]
+
+-Some other fixes
+-CM-Browser download fixed
+
 Update [3.3]
 
 -All issues with lower 4.4 fixed

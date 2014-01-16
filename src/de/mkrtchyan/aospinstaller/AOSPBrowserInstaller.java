@@ -42,6 +42,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.sufficientlysecure.rootcommands.Shell;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -59,6 +61,7 @@ public class AOSPBrowserInstaller extends Activity {
 
     private final Context mContext = this;
     private final Notifyer mNotifyer = new Notifyer(mContext);
+    private Shell mShell;
 
 	private static final String Device = Build.DEVICE;
     public static final File SystemApps = new File("/system/app");
@@ -127,7 +130,7 @@ public class AOSPBrowserInstaller extends Activity {
 	            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 		            @Override
 		            public boolean onMenuItemClick(MenuItem item) {
-                        new Installer(mContext, reloadUI, downloaded_browser).execute(item.getItemId() == R.id.iWithSync);
+                        new Installer(mContext, mShell, reloadUI, downloaded_browser).execute(item.getItemId() == R.id.iWithSync);
                         return true;
                     }
 	            });
@@ -151,6 +154,16 @@ public class AOSPBrowserInstaller extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.aosp_installer);
+
+        try {
+            mShell = Shell.startRootShell();
+        } catch (IOException e) {
+            try {
+                mShell = Shell.startShell();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
 
         apk_sums = new File(mContext.getFilesDir(), "apk_sums");
         try {
@@ -222,7 +235,7 @@ public class AOSPBrowserInstaller extends Activity {
 	public void Go(View view){
 
         if (!Common.suRecognition() && !BuildConfig.DEBUG){
-            mNotifyer.showRootDeniedDialog();
+            Notifyer.showRootDeniedDialog(mContext);
         } else {
             String FileName = "";
             if (Build.VERSION.SDK_INT == 19) {
@@ -235,7 +248,7 @@ public class AOSPBrowserInstaller extends Activity {
 
 
             if (((CheckBox) findViewById(R.id.cbCyanogenmod)).isChecked())
-                FileName = "cm_browser" + Build.VERSION.SDK_INT + ".apk";
+                FileName = "cm_browser_" + Build.VERSION.SDK_INT + ".apk";
 
             downloaded_browser = new File(mContext.getFilesDir(), FileName);
             if (!isBrowserInstalled) {
@@ -250,7 +263,7 @@ public class AOSPBrowserInstaller extends Activity {
                     doWork.run();
                 }
             } else {
-                new Uninstaller(mContext, reloadUI).execute();
+                new Uninstaller(mContext, mShell, reloadUI).execute();
             }
         }
 	}
