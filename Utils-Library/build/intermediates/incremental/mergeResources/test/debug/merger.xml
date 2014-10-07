@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="20.0.0" >
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\res" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res" >
+            <file
+                name="dialog_command_logs"
+                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res\layout\dialog_command_logs.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="donations__fragment"
+                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res\layout\donations__fragment.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="donations__fragment_flattr"
+                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res\layout\donations__fragment_flattr.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="donations__fragment_google"
+                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res\layout\donations__fragment_google.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                name="donations__fragment_paypal"
+                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res\layout\donations__fragment_paypal.xml"
+                qualifiers=""
+                type="layout" />
+            <file
+                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res\values\values.xml"
+                qualifiers="" >
+                <string name="donations__google_android_market_text" >How much?
+                </string>
+                <string name="choose_message" >Choosing %s. Are you sure?
+                </string>
+                <string name="delete_failed" >Delete failed
+                </string>
+                <string name="warning" >Warning!
+                </string>
+                <string name="wrong_format" >        You have choose a false file. The File must be in %s format.
+                </string>
+                <string name="error" >Error
+                </string>
+                <string name="positive" >Yes
+                </string>
+                <string name="donations__alert_dialog_no_browser" >No browser was found to open a website!
+                </string>
+                <string name="file_chooser_dialog_title" >Pick a file
+                </string>
+                <string name="neutral" >No
+                </string>
+                <string name="donations__google_android_market_not_supported_title" >In-App Donations are not
+        supported.
+                </string>
+                <string name="download_now" >Download %s now?
+                </string>
+                <string name="rate_message" >        Would you like to rate this app in the Play Store and support my work?
+                </string>
+                <string name="donations__thanks_dialog" >Thanks for donating!\nI really appreciate this!
+                </string>
+                <string name="donations__paypal" >PayPal
+                </string>
+                <string name="try_again" >Try again!
+                </string>
+                <string name="donations__paypal_description" >You can choose how much you want to donate after
+        clicking the button!
+                </string>
+                <string name="donations__flattr" >Flattr
+                </string>
+                <string name="corrupt_download" >Downloaded file is corrupted.
+                </string>
+
+                <dimen name="activity_vertical_margin" >16dp
+                </dimen>
+
+                <string name="later" >Later
+                </string>
+                <string name="donations__alert_dialog_title" >Error occurred
+                </string>
+                <string name="cancel" >Cancel
+                </string>
+                <string name="connecting" >Connecting
+                </string>
+                <string name="donations__google_android_market_description" >Google takes 30 % off every
+        donation!
+                </string>
+                <string name="donations__google_android_market_donate_button" >Donate!
+                </string>
+                <string name="Downloading" >Downloading…
+                </string>
+                <string name="logs_title" >Logged Shell-Commands
+                </string>
+                <string name="no_connection" >No network available. Download canceled!
+                </string>
+                <string name="donations__button_close" >Close
+                </string>
+                <string name="donations__description" >Do you find this application useful?\nSupport it\'s
+        development by sending a donation to the developer!
+                </string>
+
+                <dimen name="activity_horizontal_margin" >16dp
+                </dimen>
+
+                <string name="empty_dir" >Directory empty: %s
+                </string>
+                <string name="donations__thanks_dialog_title" >Thanks!
+                </string>
+                <string name="failed_download" >        Oh no, a problem is occurred. Restart the download.\n\n%s?
+                </string>
+                <string name="clear_logs" >Clear Logs
+                </string>
+                <string name="donations__flattr_description" >Flattr takes 10 % as a monthly fee!
+                </string>
+                <string name="donations__google_android_market" >Google Play Store
+                </string>
+                <string name="never_ask" >Never ask again
+                </string>
+                <string name="info" >Information
+                </string>
+                <string name="donations__google_android_market_not_supported" >In-App Donations are not
+        supported. Is Google Play Store installed correctly?
+                </string>
+                <string name="negative" >Cancel
+                </string>
+                <string name="no_root" >        Device not Rooted. Please Root it. More information at xda-developers.com
+                </string>
+                <string name="rate_title" >Rate my App!
+                </string>
+            </file>
+            <file
+                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\intermediates\bundles\debug\res\values-de\values.xml"
+                qualifiers="de" >
+                <string name="delete_failed" >Löschen fehlgeschlagen
+                </string>
+                <string name="failed_download" >        Ein Fehler während des Downloads von %s ist aufgetreten möchten Sie es wiederholen?
+                </string>
+                <string name="logs_title" >Mitgeschriebene Shell-Befehle
+                </string>
+                <string name="Downloading" >Lade herunter…
+                </string>
+                <string name="info" >Information
+                </string>
+                <string name="rate_title" >Bewerten Sie meine App!
+                </string>
+                <string name="file_chooser_dialog_title" >Datei auswählen
+                </string>
+                <string name="later" >Später
+                </string>
+                <string name="cancel" >Abbrechen
+                </string>
+                <string name="connecting" >Verbinde
+                </string>
+                <string name="try_again" >Erneut versuchen!
+                </string>
+                <string name="positive" >Ja
+                </string>
+                <string name="rate_message" >        Möchten Sie diese App im Play Store bewerten und meine Arbeit untersützen?
+                </string>
+                <string name="warning" >Warnung!
+                </string>
+                <string name="no_root" >Root-Zugriff verweigert! Mehr Infos unter xda-developers.com
+                </string>
+                <string name="download_now" >%s jetzt herunterladen?
+                </string>
+                <string name="error" >Fehler
+                </string>
+                <string name="neutral" >Nein
+                </string>
+                <string name="no_connection" >        Sie sind mit keinen Netztwerk verbunden. Download wurde abgebrochen!
+                </string>
+                <string name="corrupt_download" >Heruntergeladene Datei ist beschädigt
+                </string>
+                <string name="never_ask" >Nie wieder fragen
+                </string>
+                <string name="choose_message" >Sind Sie sicher das Sie %s auswählen möchten?
+                </string>
+                <string name="negative" >Abbrechen
+                </string>
+                <string name="clear_logs" >Logs säubern
+                </string>
+            </file>
+        </source>
+    </dataSet>
+    <dataSet config="main" >
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\src\androidTest\res" />
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\generated\res\rs\test\debug" />
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\build\generated\res\generated\test\debug" />
+    </dataSet>
+
+</merger>

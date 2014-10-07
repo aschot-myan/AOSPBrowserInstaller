@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\root-commands\src\main\res" />
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\root-commands\build\generated\res\rs\release" />
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\root-commands\build\generated\res\generated\release" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\root-commands\src\release\res" />
+    </dataSet>
+
+</merger>

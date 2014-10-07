@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-9a3377bfeb519c48ecd526649fb62300a69de863.jar"
+        jar="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-5d7e4cb3743aa3140da033e815058188449d4cce.jar"
+        jar="C:\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
+    <item
+        dex="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\pre-dexed\debug\classes-72b5afcb5c8126348ac3fbdf8918b2aa539777ca.jar"
+        jar="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\exploded-aar\AOSPBrowserInstaller\Utils-Library\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="a3540c2673d3f0cf7e513ff288b668e0f3d66d0a"/>
+    <item
+        dex="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\pre-dexed\debug\classes-c3eb510b6e95d4f4b41f5b556f8163d9c85dcc71.jar"
+        jar="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\exploded-aar\AOSPBrowserInstaller\root-commands\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f18e38a27c6df1502f718a9b112273891ac4f7da"/>
+    <item
+        dex="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\pre-dexed\debug\classes-11ef9595364c6bcb83439ed47b4d0ae2d38e621c.jar"
+        jar="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\AOSP Browser Installer\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+
+</pre-dex-items>

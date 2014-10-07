@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AOSP Browser Installer/AOSP Browser Installer.iml" filepath="$PROJECT_DIR$/AOSP Browser Installer/AOSP Browser Installer.iml" />
       <module fileurl="file://$PROJECT_DIR$/AOSPBrowserInstaller.iml" filepath="$PROJECT_DIR$/AOSPBrowserInstaller.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utils-Library/Utils-Library.iml" filepath="$PROJECT_DIR$/../Utils-Library/Utils-Library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Libs/root-commands/libraries/RootCommands/src/root-commands/root-commands.iml" filepath="$PROJECT_DIR$/../Libs/root-commands/libraries/RootCommands/src/root-commands/root-commands.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Utils-Library/Utils-Library.iml" filepath="$PROJECT_DIR$/Utils-Library/Utils-Library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/root-commands/root-commands.iml" filepath="$PROJECT_DIR$/root-commands/root-commands.iml" />
     </modules>
   </component>
 </project>

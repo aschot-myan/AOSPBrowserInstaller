@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/C:/Users/ashot_000/Google%20Drive/workspace/AOSPBrowserInstaller/Utils-Library/src/main/res/values/dimens.xml -->
+    <eat-comment />
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- From: file:/C:/Users/ashot_000/Google%20Drive/workspace/AOSPBrowserInstaller/Utils-Library/src/main/res/values/strings.xml -->
+    <eat-comment />
+
+    <string name="Downloading">Downloading…</string>
+    <string name="cancel">Cancel</string>
+    <string name="choose_message">Choosing %s. Are you sure?</string>
+    <string name="clear_logs">Clear Logs</string>
+    <string name="connecting">Connecting</string>
+    <string name="corrupt_download">Downloaded file is corrupted.</string>
+    <string name="delete_failed">Delete failed</string>
+    <!-- From: file:/C:/Users/ashot_000/Google%20Drive/workspace/AOSPBrowserInstaller/Utils-Library/src/main/res/values/donations__strings.xml -->
+    <eat-comment />
+
+    <string name="donations__alert_dialog_no_browser">No browser was found to open a website!</string>
+    <string name="donations__alert_dialog_title">Error occurred</string>
+    <string name="donations__button_close">Close</string>
+    <string name="donations__description">Do you find this application useful?\nSupport it\'s
+        development by sending a donation to the developer!</string>
+    <string name="donations__flattr">Flattr</string>
+    <string name="donations__flattr_description">Flattr takes 10 % as a monthly fee!</string>
+    <string name="donations__google_android_market">Google Play Store</string>
+    <string name="donations__google_android_market_description">Google takes 30 % off every
+        donation!</string>
+    <string name="donations__google_android_market_donate_button">Donate!</string>
+    <string name="donations__google_android_market_not_supported">In-App Donations are not
+        supported. Is Google Play Store installed correctly?</string>
+    <string name="donations__google_android_market_not_supported_title">In-App Donations are not
+        supported.</string>
+    <string name="donations__google_android_market_text">How much?</string>
+    <string name="donations__paypal">PayPal</string>
+    <string name="donations__paypal_description">You can choose how much you want to donate after
+        clicking the button!</string>
+    <string name="donations__thanks_dialog">Thanks for donating!\nI really appreciate this!</string>
+    <string name="donations__thanks_dialog_title">Thanks!</string>
+    <!-- From: file:/C:/Users/ashot_000/Google%20Drive/workspace/AOSPBrowserInstaller/Utils-Library/src/main/res/values/strings.xml -->
+    <eat-comment />
+
+    <string name="download_now">Download %s now?</string>
+    <string name="empty_dir">Directory empty: %s</string>
+    <string name="error">Error</string>
+    <string name="failed_download">        Oh no, a problem is occurred. Restart the download.\n\n%s?</string>
+    <string name="file_chooser_dialog_title">Pick a file</string>
+    <string name="info">Information</string>
+    <string name="later">Later</string>
+    <string name="logs_title">Logged Shell-Commands</string>
+    <string name="negative">Cancel</string>
+    <string name="neutral">No</string>
+    <string name="never_ask">Never ask again</string>
+    <string name="no_connection">No network available. Download canceled!</string>
+    <string name="no_root">        Device not Rooted. Please Root it. More information at xda-developers.com</string>
+    <string name="positive">Yes</string>
+    <string name="rate_message">        Would you like to rate this app in the Play Store and support my work?</string>
+    <string name="rate_title">Rate my App!</string>
+    <string name="try_again">Try again!</string>
+    <string name="warning">Warning!</string>
+    <string name="wrong_format">        You have choose a false file. The File must be in %s format.</string>
+
+</resources>
