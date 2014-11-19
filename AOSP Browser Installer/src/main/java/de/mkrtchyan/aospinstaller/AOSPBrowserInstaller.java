@@ -43,8 +43,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import org.sufficientlysecure.rootcommands.Shell;
 import org.sufficientlysecure.rootcommands.Toolbox;
@@ -80,11 +84,6 @@ public class AOSPBrowserInstaller extends Activity {
     public static final File bppodex_bak = new File(SystemApps, "BrowserProviderProxy.odex.bak");
 
 	boolean installed[];
-
-	private ImageView ivIcon;
-	private TextView tvInfo;
-	private ProgressBar pbInstallation;
-	private Button bGo;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +104,10 @@ public class AOSPBrowserInstaller extends Activity {
             Common.setBooleanPref(mContext, PREF_NAME, PREF_SHOW_ADS, true);
         }
 
-		bGo = (Button) findViewById(R.id.bGo);
-		ivIcon = (ImageView) findViewById(R.id.ivIcon);
-		tvInfo = (TextView) findViewById(R.id.tvInfo);
-		pbInstallation = (ProgressBar) findViewById(R.id.pbInstallation);
+        ImageView ivIcon = (ImageView) findViewById(R.id.ivIcon);
+        TextView tvInfo = (TextView) findViewById(R.id.tvInfo);
+        ProgressBar pbInstallation = (ProgressBar) findViewById(R.id.pbInstallation);
+        Button bGo = (Button) findViewById(R.id.bGo);
 
 		pbInstallation.setMax(1);
 		ivIcon.setImageResource(installed[0] ? R.drawable.ic_launcher_browser : R.drawable.ic_launcher_browserun);
@@ -136,6 +135,18 @@ public class AOSPBrowserInstaller extends Activity {
             Alert.setTitle(R.string.warning);
             Alert.setMessage(R.string.install_failed);
             Alert.show();
+        }
+
+        AdView ads = (AdView) findViewById(R.id.ads);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.AOSPLayout);
+        if (ads != null) {
+            if (Common.getBooleanPref(mContext, PREF_NAME, PREF_SHOW_ADS)) {
+                ads.loadAd(new AdRequest.Builder()
+                        .addTestDevice("53B35F6E356EB90AD09B357DF092BC8F")
+                        .build());
+            } else {
+                layout.removeView(ads);
+            }
         }
 	}
 
@@ -194,8 +205,8 @@ public class AOSPBrowserInstaller extends Activity {
 		if (!installed[0]) {
 			showBrowserDialog();
 		} else {
-			UninstallThread uninstallThread = new UninstallThread(mToolbox);
-			uninstallThread.start();
+			Uninstaller uninstaller = new Uninstaller(mActivity, mContext, mShell, mToolbox);
+            uninstaller.uninstall();
 		}
 	}
 
@@ -203,7 +214,7 @@ public class AOSPBrowserInstaller extends Activity {
 		final Dialog dialog = new Dialog(mContext);
 		LinearLayout lLayout = new LinearLayout(mContext);
 		lLayout.setOrientation(LinearLayout.HORIZONTAL);
-		ImageButton AOSP = new ImageButton(mContext);
+		ImageView AOSP = new ImageView(mContext);
 		AOSP.setImageResource(R.drawable.ic_aosp);
 		AOSP.setTag("aosp");
 		AOSP.setOnClickListener(new View.OnClickListener() {
@@ -213,7 +224,7 @@ public class AOSPBrowserInstaller extends Activity {
 				dialog.dismiss();
 			}
 		});
-		ImageButton OMNI = new ImageButton(mContext);
+        ImageView OMNI = new ImageView(mContext);
 		OMNI.setTag("omni");
 		OMNI.setImageResource(R.drawable.ic_omni);
 		OMNI.setOnClickListener(new View.OnClickListener() {
@@ -223,7 +234,7 @@ public class AOSPBrowserInstaller extends Activity {
 				dialog.dismiss();
 			}
 		});
-		ImageButton CM = new ImageButton(mContext);
+        ImageView CM = new ImageView(mContext);
 		CM.setImageResource(R.drawable.ic_cm);
 		CM.setTag("cm");
 		CM.setOnClickListener(new View.OnClickListener() {
@@ -327,94 +338,30 @@ public class AOSPBrowserInstaller extends Activity {
 	}
 
 	public void install(final File file) {
+        final Installer installer = new Installer(mActivity, mShell, mToolbox);
 		AlertDialog.Builder abuilder = new AlertDialog.Builder(mContext);
 		abuilder.setMessage("Use Google Bookmarks Sync?");
 		abuilder.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int i) {
-				InstallThread installThread = new InstallThread(mActivity, mToolbox, file, true);
-				installThread.start();
+                installer.setInstallSync(true);
+                installer.install(file);
 			}
 		});
 		abuilder.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialogInterface, int i) {
-				InstallThread installThread = new InstallThread(mActivity, mToolbox, file, false);
-				installThread.start();
+                installer.install(file);
 			}
 		});
 		abuilder.show();
 	}
 
-	private class InstallThread extends Thread {
-
-
-		public InstallThread(final Activity mActivity, final Toolbox toolbox, final File localBrowser,
-                             final boolean WithSync) {
-			super(new Runnable() {
-				@Override
-				public void run() {
-					try {
-                        mActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final ProgressDialog progressDialog = new ProgressDialog(mActivity);
-                                progressDialog.setMessage(mActivity.getString(R.string.installing));
-                                progressDialog.setMax(8);
-                                progressDialog.show();
-                            }
-                        });
-
-                        toolbox.remount(SystemApps, "RW");
-
-						if (bppapk.exists()) suMove(bppapk, bppapk_bak);
-						if (bppodex.exists()) suMove(bppodex, bppodex_bak);
-						if (!localBrowser.exists())
-                            toolbox.copyFile(localBrowser, installed_browser, false, false);
-						if (WithSync) {
-							File localChromeSync = new File(mActivity.getFilesDir(),
-                                    chromesync.getName());
-							Common.pushFileFromRAW(mActivity, localChromeSync,
-                                    R.raw.chromebookmarkssyncadapter, false);
-                            toolbox.copyFile(localBrowser, chromesync, false, false);
-                            toolbox.setFilePermissions(chromesync, "644");
-						}
-                        toolbox.setFilePermissions(installed_browser, "644");
-                        toolbox.remount(SystemApps, "RO");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-	}
-
-	private class UninstallThread extends Thread {
-
-		public UninstallThread(final Toolbox mToolbox) {
-            super(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        mToolbox.remount(SystemApps, "RW");
-                        if (bppapk_bak.exists()) suMove(bppapk_bak, bppapk);
-                        if (bppodex_bak.exists()) suMove(bppodex_bak, bppodex);
-                        if (installed_browser.exists()) suRemove(installed_browser);
-                        if (installed[1] && chromesync.exists()) suRemove(chromesync);
-                        mToolbox.remount(SystemApps, "RO");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-		}
-	}
-
-    public void suRemove(File file) throws FailedExecuteCommand {
-        mShell.execCommand("rm " + file.getAbsolutePath());
+    public static void suRemove(Shell shell, File file) throws FailedExecuteCommand {
+        shell.execCommand("rm " + file.getAbsolutePath());
     }
 
-    public void suMove(File src, File dest) throws FailedExecuteCommand {
-        mShell.execCommand("mv " + src.getAbsolutePath() + " " + dest.getAbsolutePath());
+    public static void suMove(Shell shell, File src, File dest) throws FailedExecuteCommand {
+        shell.execCommand("mv " + src.getAbsolutePath() + " " + dest.getAbsolutePath());
     }
 }

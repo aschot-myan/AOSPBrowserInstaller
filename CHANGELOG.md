@@ -2,6 +2,17 @@
 CHANGELOG
 ====================
 
+Update [4.0.1]
+
+-All previous bugs fixed
+-New Layout
+
+Update [4.0.0]
+
+-OmniROM Browsers added
+-New Server
+-New install routine
+
 Update [3.3.1]
 
 -Some other fixes

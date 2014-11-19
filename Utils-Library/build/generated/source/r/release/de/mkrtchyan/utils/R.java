@@ -18,16 +18,13 @@ public final class R {
         public static int bClearLog=0x7f050000;
         public static int donations__flattr=0x7f050003;
         public static int donations__flattr_stub=0x7f050002;
-        public static int donations__flattr_url=0x7f05000a;
-        public static int donations__flattr_webview=0x7f050008;
+        public static int donations__flattr_url=0x7f050008;
+        public static int donations__flattr_webview=0x7f050006;
         public static int donations__google=0x7f050005;
-        public static int donations__google_android_market_donate_button=0x7f05000c;
-        public static int donations__google_android_market_spinner=0x7f05000b;
+        public static int donations__google_android_market_donate_button=0x7f05000a;
+        public static int donations__google_android_market_spinner=0x7f050009;
         public static int donations__google_stub=0x7f050004;
-        public static int donations__loading_frame=0x7f050009;
-        public static int donations__paypal=0x7f050007;
-        public static int donations__paypal_donate_button=0x7f05000d;
-        public static int donations__paypal_stub=0x7f050006;
+        public static int donations__loading_frame=0x7f050007;
         public static int tvSuLogs=0x7f050001;
     }
     public static final class layout {
@@ -35,7 +32,6 @@ public final class R {
         public static int donations__fragment=0x7f020001;
         public static int donations__fragment_flattr=0x7f020002;
         public static int donations__fragment_google=0x7f020003;
-        public static int donations__fragment_paypal=0x7f020004;
     }
     public static final class string {
         public static int Downloading=0x7f040000;

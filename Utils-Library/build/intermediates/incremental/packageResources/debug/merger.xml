@@ -24,11 +24,6 @@
                 qualifiers=""
                 type="layout" />
             <file
-                name="donations__fragment_paypal"
-                path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\src\main\res\layout\donations__fragment_paypal.xml"
-                qualifiers=""
-                type="layout" />
-            <file
                 path="C:\Users\Ashot\Google Drive\workspace\AOSPBrowserInstaller\Utils-Library\src\main\res\values\dimens.xml"
                 qualifiers="" >
                 <dimen name="activity_vertical_margin" >16dp

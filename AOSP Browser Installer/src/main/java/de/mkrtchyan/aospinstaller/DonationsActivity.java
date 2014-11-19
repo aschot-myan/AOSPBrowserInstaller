@@ -42,14 +42,6 @@ public class DonationsActivity extends FragmentActivity {
     private static final String[] GOOGLE_CATALOG = new String[]{"donate_0_50", "donate_1", "donate_2", "donate_3", "donate_5"};
 
     /**
-     * PayPal
-     */
-    private static final boolean PAYPAL = true;
-    private static final String PAYPAL_USER = "ashotmkrtchyan1995@gmail.com";
-    private static final String PAYPAL_CURRENCY_CODE = "EUR";
-    private static final String PAYPAL_ITEM_NAME = "AOSPBrowser Installer donation";
-
-    /**
      * Flattr
      */
     private static final boolean FLATTR = true;
@@ -70,7 +62,7 @@ public class DonationsActivity extends FragmentActivity {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         DonationsFragment donationsFragment;
         donationsFragment = DonationsFragment.newInstance(BuildConfig.DEBUG, GOOGLE_PLAY, GOOGLE_PUBKEY, GOOGLE_CATALOG,
-                getResources().getStringArray(R.array.donation_google_catalog_values), PAYPAL, PAYPAL_USER, PAYPAL_CURRENCY_CODE, PAYPAL_ITEM_NAME, FLATTR, FLATTR_PROJECT_URL, FLATTR_URL);
+                getResources().getStringArray(R.array.donation_google_catalog_values), FLATTR, FLATTR_PROJECT_URL, FLATTR_URL);
 
         ft.replace(layout.getId(), donationsFragment, "donationsFragment");
         ft.commit();
